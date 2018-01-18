@@ -1,86 +1,102 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package org.usfirst.frc.team2655.robot;
 
+import org.usfirst.frc.team2655.robot.controllers.IController;
+import org.usfirst.frc.team2655.robot.subsystem.DriveBaseSubsystem;
+import org.usfirst.frc.team2655.robot.values.Values;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.properties file in the
- * project.
- */
-public class Robot extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
 
+public class Robot extends IterativeRobot {
+	
+	// Our motor controllers. These will be initialized (created) in robotInit
+	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
+	public static WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
+    public static WPI_TalonSRX leftSlave2 = new WPI_TalonSRX(3);
+    public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(4);
+	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(5);
+    public static WPI_TalonSRX rightSlave2 = new WPI_TalonSRX(6);
+    
+	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, leftSlave2, rightMotor, rightSlave1, rightSlave2};
+	
+	// The Gyro
+	
+	// The RobotDrive class handles all the motors
+	public static DifferentialDrive robotDrive = new DifferentialDrive(leftMotor, rightMotor);
+	
+	// Robot Subsystems
+	public static DriveBaseSubsystem driveBase = new DriveBaseSubsystem();
+	
+	// Controller Selector
+	public static SendableChooser<IController> controllerSelect = new SendableChooser<IController>();
+	
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * Setup the motor controllers and the drive object
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
+		// Setup controllers
+		for(IController c : OI.controllers) {
+			controllerSelect.addObject(c.getName(), c);
+		}
+		controllerSelect.addDefault(OI.controllers.get(0).getName(), OI.controllers.get(0));
+		OI.selectController(OI.controllers.get(0));
+	    	    		
+		// Setup the rear motors to follow (copy) the front motors
+		leftSlave1.follow(leftMotor);
+		leftSlave2.follow(leftMotor);
+		rightSlave1.follow(rightMotor);
+		rightSlave2.follow(rightMotor);
+				
+		// Setup the motor controllers
+		for(WPI_TalonSRX m : motors) {
+			m.setInverted(true);
+			m.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+			m.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		}
+		
+		
+		// Add stuff to the dashboard
+		SmartDashboard.putBoolean(Values.DRIVE_CUBIC, true);
+		SmartDashboard.putBoolean(Values.ROTATE_CUBIC, false);
+		SmartDashboard.putNumber(Values.GYRO, 0);
+		SmartDashboard.putData(Values.CONTROLLER_SELECT, controllerSelect);
+		
 	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * <p>You can add additional auto modes by adding additional comparisons to
-	 * the switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
+	
 	@Override
-	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
-	}
-
-	/**
-	 * This function is called periodically during autonomous.
-	 */
-	@Override
-	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
+	public void robotPeriodic() {
+		super.robotPeriodic();
+		// Update controller choice
+		IController selected = controllerSelect.getSelected();
+		if(selected != OI.selectedController) {
+			OI.selectController(selected);
 		}
 	}
 
 	/**
-	 * This function is called periodically during operator control.
+	 * Called every 20ms during the driver controlled period
 	 */
 	@Override
 	public void teleopPeriodic() {
+		boolean driveCubic = SmartDashboard.getBoolean(Values.DRIVE_CUBIC, true);
+		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
+		
+		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
+		double rotation = -1 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
+				
+		driveBase.drive(power, rotation);
+		
+		if (OI.js0.getRawButton(2)) {
+			driveBase.driveDistance(.5, 24);
+		}
 	}
-
-	/**
-	 * This function is called periodically during test mode.
-	 */
-	@Override
-	public void testPeriodic() {
-	}
+	
+	
 }
