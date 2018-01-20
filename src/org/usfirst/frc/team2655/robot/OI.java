@@ -3,6 +3,7 @@ package org.usfirst.frc.team2655.robot;
 import java.util.Arrays;
 import java.util.List;
 
+import org.usfirst.frc.team2655.robot.controllers.Button;
 import org.usfirst.frc.team2655.robot.controllers.FancyAxis;
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.controllers.LogitechController;
@@ -44,10 +45,15 @@ public class OI {
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER,
 				RobotProperties.MID_MOVE_POWER);
+		IntakeInButton = new Button(js0, controller.getIntakeInButton());
+		IntakeOutButton = new Button(js0, controller.getIntakeOutButton());
 	}
 	
 	// The axis and buttons
 	public static FancyAxis driveAxis;
 	public static FancyAxis rotateAxis;
-	//public static Button resetButton; 
+	//public static Button resetButton;
+	public static Button IntakeInButton;
+	public static Button IntakeOutButton;
+	public static Button IntakeLockButton;
 }

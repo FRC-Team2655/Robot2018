@@ -27,4 +27,22 @@ public class XboxController extends IController {
 		return false;
 	}
 
+	@Override
+	public int getIntakeInButton() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getIntakeOutButton() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getIntakeLockButton() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

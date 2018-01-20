@@ -17,5 +17,8 @@ public abstract class IController {
 	
 	// Create a function to get the id for each button's action
 	//public abstract int getResetButton();
+	public abstract int getIntakeInButton();
+	public abstract int getIntakeOutButton();
+	public abstract int getIntakeLockButton();
 	
 }
