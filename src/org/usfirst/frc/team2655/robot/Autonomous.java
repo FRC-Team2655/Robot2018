@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.Timer;
+
 public class Autonomous { 
 	
 	public Autonomous() {
@@ -51,6 +53,19 @@ public class Autonomous {
 			case "ROTATE":
 				rotate(args.get(i), null);
 				break;
+				
+			case "DELAY":
+				delay(args.get(i), null);
+				break;
+				
+			case "RAISE_LIFTER":
+				raiseLifter(args.get(i), null);
+				break;
+				
+			case "OUTPUT":
+				output(args.get(i), null);
+				break;
+				
 			}
 			
 		}
@@ -64,7 +79,19 @@ public class Autonomous {
 	}
 	//This will eventually rotate the robit
 	private void rotate(Double arg1, Double arg2) {
-		System.out.println("Rotate" + " " + arg1 + " " + arg2);
+		Robot.driveBase.rotatePID(arg1);
+	}
+	
+	private void delay(Double arg1, Double arg2) {
+		Timer.delay(arg1);
+	}
+	
+	private void raiseLifter(Double arg1, Double arg2) {
+		Robot.lifter.liftDistance(1, arg1);
+	}
+	
+	private void output(Double arg1, Double arg2) {
+		Robot.intake.moveIntake((int)(double)arg1);
 	}
 
 }

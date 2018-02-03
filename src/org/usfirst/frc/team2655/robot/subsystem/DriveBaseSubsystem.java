@@ -2,21 +2,55 @@ package org.usfirst.frc.team2655.robot.subsystem;
 
 import org.usfirst.frc.team2655.robot.Robot;
 import org.usfirst.frc.team2655.robot.RobotProperties;
+import org.usfirst.frc.team2655.robot.values.Values;
 
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class DriveBaseSubsystem extends PIDSubsystem {
+public class DriveBaseSubsystem  {
 		
+	// The rotate PID
+	
+	private PIDSource rotateSource = new PIDSource() {
+    	@Override
+    	public double pidGet() {
+    		return Robot.imu.getAngleZ();
+    	}
+
+		@Override
+		public void setPIDSourceType(PIDSourceType pidSource) {
+		}
+
+		@Override
+		public PIDSourceType getPIDSourceType() {
+			return PIDSourceType.kDisplacement;
+		}
+    };
+    private PIDOutput rotateOutput = new PIDOutput() {
+    	@Override
+    	public void pidWrite(double output) {
+    		SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleZ());
+    		if(Math.abs(rotatePIDController.getError()) < 1) {
+    			rotatePIDController.disable();
+    		}
+    		drive(0, -output);
+    	}
+    };
+	PIDController rotatePIDController = new PIDController(0, 0, 0, 0, rotateSource, rotateOutput);
+	private double rotateSetpoint = 0;
+	
 	/**
 	 * Initialize LiveWindow PIDs
 	 */
 	public DriveBaseSubsystem() {
-		super("drive", 1, 0, 0, 0);
-		this.setAbsoluteTolerance(140);
-		getPIDController().setContinuous(false);
-		LiveWindow.add(this.getPIDController());
+		rotatePIDController.setName("Rotate PID");
+		rotatePIDController.setContinuous(false);
+		LiveWindow.add(rotatePIDController);
 	}
 	
     public void initDefaultCommand() {}
@@ -30,12 +64,18 @@ public class DriveBaseSubsystem extends PIDSubsystem {
     	Robot.robotDrive.arcadeDrive(power, rotation, false);
     }
     
+    public void rotatePID(double degree) {
+    	rotateSetpoint = Robot.imu.getAngleZ() + degree;
+    	rotatePIDController.setSetpoint(rotateSetpoint);
+    	rotatePIDController.enable();
+    }
+    
     /**
      * Drive until a distance at a certain speed in a straight line
      * @param speed The speed to drive at (-1 to 1)
      * @param distance The distance to drive until (inches)
      */
-    public void driveDistance(double speed, double distance) {
+    /*public void driveDistance(double speed, double distance) {
     	if (distance > 0) {
     		speed = Math.abs(speed);
     	} else {
@@ -49,7 +89,7 @@ public class DriveBaseSubsystem extends PIDSubsystem {
     		ticks = getAvgTicks();
     	}
     	drive(0, 0);
-    }
+    }*/
     
     /**
      * Average the values of all four encoders
@@ -63,15 +103,43 @@ public class DriveBaseSubsystem extends PIDSubsystem {
     	
     }
     
-    protected double returnPIDInput() {
-    	double val = getAvgTicks();
-    	return val;
-    }
+    public double[] arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs) {
+      // Square the inputs (while preserving the sign) to increase fine control
+      // while permitting full power.
+      if (squaredInputs) {
+        xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
+        zRotation = Math.copySign(zRotation * zRotation, zRotation);
+      }
 
-    protected void usePIDOutput(double output) {
-    	drive(output, 0);
+      double leftMotorOutput;
+      double rightMotorOutput;
+
+      double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
+
+      zRotation *= 2;
+      
+      if (xSpeed >= 0.0) {
+        // First quadrant, else second quadrant
+        if (zRotation >= 0.0) {
+          leftMotorOutput = maxInput;
+          rightMotorOutput = xSpeed - zRotation;
+        } else {
+          leftMotorOutput = xSpeed + zRotation;
+          rightMotorOutput = maxInput;
+        }
+      } else {
+        // Third quadrant, else fourth quadrant
+        if (zRotation >= 0.0) {
+          leftMotorOutput = xSpeed + zRotation;
+          rightMotorOutput = maxInput;
+        } else {
+          leftMotorOutput = maxInput;
+          rightMotorOutput = xSpeed - zRotation;
+        }
+      }
+      
+      return new double[] {leftMotorOutput, -rightMotorOutput};
     }
-    
     
 }
 
