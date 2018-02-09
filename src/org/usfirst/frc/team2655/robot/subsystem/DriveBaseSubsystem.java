@@ -64,6 +64,10 @@ public class DriveBaseSubsystem  {
     	Robot.robotDrive.arcadeDrive(power, rotation, false);
     }
     
+    public void driveTank(double left, double right) {
+    	Robot.robotDrive.tankDrive(left, right);
+    }
+    
     public void rotatePID(double degree) {
     	rotateSetpoint = Robot.imu.getAngleZ() + degree;
     	rotatePIDController.setSetpoint(rotateSetpoint);

@@ -1,6 +1,6 @@
 package org.usfirst.frc.team2655.robot.controllers;
 
-public class LogitechController extends IController {
+/*public class LogitechController extends IController {
 
 	@Override
 	public String getName() {
@@ -45,4 +45,14 @@ public class LogitechController extends IController {
 		return 0;
 	}
 
-}
+	@Override
+	public int getRightTankAxis() {
+		return 3;
+	}
+
+	@Override
+	public double adjustAxis(double original) {
+		return original;
+	}
+
+}*/

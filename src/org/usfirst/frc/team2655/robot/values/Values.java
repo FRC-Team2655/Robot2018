@@ -8,6 +8,8 @@ public class Values {
 	public static final String CURRENT_VALUE = "PID_Graph";
 	public static final String GYRO = "Gyro";
 	public static final String ROTATE_PID = "RotatePID Output";
+	public static final String TANK_MODE = "Tank Drive Mode";
+	
 	public static final String AUTO_SCALE_CHOOSER = "Auto Scale";
 	public static final String AUTO_CROSS_CHOOSER = "Auto Cross";
 	public static final String AUTO_DELAY = "Auto Start Delay";

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class FancyAxis {
 	
 	private Joystick joystick;
+	private IController controller;
 	private int axis;
 	
 	private boolean flipAxis;
@@ -18,8 +19,9 @@ public class FancyAxis {
 	
 	private double[] coefficents;
 	
-	public FancyAxis(Joystick joystick, int axis, boolean flipAxis) {
+	public FancyAxis(Joystick joystick, IController controller, int axis, boolean flipAxis) {
 		this.joystick = joystick;
+		this.controller = controller;
 		this.axis = axis;
 		this.flipAxis = flipAxis;
 		updateRegression();
@@ -27,8 +29,9 @@ public class FancyAxis {
 	
 	
 
-	public FancyAxis(Joystick joystick, int axis, boolean flipAxis, double deadband, double minPower, double midPower) {
+	public FancyAxis(Joystick joystick, IController controller, int axis, boolean flipAxis, double deadband, double minPower, double midPower) {
 		this.joystick = joystick;
+		this.controller = controller;
 		this.axis = axis;
 		this.flipAxis = flipAxis;
 		this.deadband = deadband;
@@ -122,7 +125,7 @@ public class FancyAxis {
 	 * @return The value if it is outside the deadband otherwise zero.
 	 */
 	public double getValue() {
-		double value = joystick.getRawAxis(axis);
+		double value = controller.adjustAxis(joystick.getRawAxis(axis));
 		if(flipAxis)
 			value *= -1;
 		if(Math.abs(value) < deadband) return 0; // Make sure we are within the deadband	        
@@ -139,7 +142,7 @@ public class FancyAxis {
 	 * @return The value if it is outside the deadband otherwise zero.
 	 */
 	public double getValueLinear() {
-		double value = joystick.getRawAxis(axis);
+		double value = controller.adjustAxis(joystick.getRawAxis(axis));
 		if(flipAxis)
 			value *= -1;
 	    if(Math.abs(value) < deadband) return 0;

@@ -8,12 +8,15 @@ public abstract class IController {
 	// The name of the controller
 	public abstract String getName();
 	
+	public abstract double adjustAxis(double original);
+	
 	// The deadband for the controller's axis
 	public abstract double getDeadband();
 	
 	// Create a function to get the id for each axis's function
 	public abstract int getDriveAxis();
 	public abstract int getRotateAxis();
+	public abstract int getRightTankAxis();
 	
 	// Create a function to get the id for each button's action
 	//public abstract int getResetButton();

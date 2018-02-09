@@ -1,6 +1,6 @@
 package org.usfirst.frc.team2655.robot.controllers;
 
-public class XboxController extends IController {
+/*public class XboxController extends IController {
 
 	@Override
 	public String getName() {
@@ -45,4 +45,14 @@ public class XboxController extends IController {
 		return 0;
 	}
 
-}
+	@Override
+	public int getRightTankAxis() {
+		return 5;
+	}
+
+	@Override
+	public double adjustAxis(double original) {
+		return original;
+	}
+
+}*/

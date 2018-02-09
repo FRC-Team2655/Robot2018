@@ -1,19 +1,22 @@
 package org.usfirst.frc.team2655.robot.controllers;
 
-/*public class PS2Controller extends IController {
+/*public class NewLogitech extends IController {
 
-	
-	
 	@Override
-	public double getDeadband() {
-		return .2;
+	public boolean flipAxis() {
+		return false;
 	}
 
 	@Override
 	public String getName() {
-		return "PS2 Controller";
+		return "New Logitech";
 	}
-	
+
+	@Override
+	public double getDeadband() {
+		return 0.1;
+	}
+
 	@Override
 	public int getDriveAxis() {
 		return 1;
@@ -21,12 +24,7 @@ package org.usfirst.frc.team2655.robot.controllers;
 
 	@Override
 	public int getRotateAxis() {
-		return 3;
-	}
-
-	@Override
-	public boolean flipAxis() {
-		return false;
+		return 4;
 	}
 
 	@Override
@@ -49,12 +47,12 @@ package org.usfirst.frc.team2655.robot.controllers;
 
 	@Override
 	public int getRightTankAxis() {
-		return 2;
+		return 5;
 	}
 
 	@Override
 	public double adjustAxis(double original) {
-		return original;
+		return Math.copySign(Math.sqrt(Math.abs(original)), original);
 	}
 
 }*/

@@ -3,12 +3,9 @@ package org.usfirst.frc.team2655.robot;
 import java.util.Arrays;
 import java.util.List;
 
-import org.usfirst.frc.team2655.robot.controllers.Button;
 import org.usfirst.frc.team2655.robot.controllers.FancyAxis;
 import org.usfirst.frc.team2655.robot.controllers.IController;
-import org.usfirst.frc.team2655.robot.controllers.LogitechController;
-import org.usfirst.frc.team2655.robot.controllers.PS2Controller;
-import org.usfirst.frc.team2655.robot.controllers.XboxController;
+import org.usfirst.frc.team2655.robot.controllers.PS4Controller;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -21,9 +18,11 @@ public class OI {
 	
 	// All possible controllers
 	public static List<IController> controllers = Arrays.asList(new IController[] {
-			new PS2Controller(),
-			new LogitechController(),
-			new XboxController()
+			new PS4Controller(),
+			//new PS2Controller(),
+			//new NewLogitech(),
+			//new LogitechController(),
+			//new XboxController()
 	});
 	
 	/**
@@ -37,23 +36,30 @@ public class OI {
 		else
 			return;
 		// Setup all axis and buttons here
-		driveAxis = new FancyAxis(js0, controller.getDriveAxis(), controller.flipAxis(),
+		driveAxis = new FancyAxis(js0, controller, controller.getDriveAxis(), controller.flipAxis(),
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER, 
 				RobotProperties.MID_MOVE_POWER);
-		rotateAxis = new FancyAxis(js0, controller.getRotateAxis(), controller.flipAxis(),
+		rotateAxis = new FancyAxis(js0, controller, controller.getRotateAxis(), controller.flipAxis(),
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER,
 				RobotProperties.MID_MOVE_POWER);
-		IntakeInButton = new Button(js0, controller.getIntakeInButton());
-		IntakeOutButton = new Button(js0, controller.getIntakeOutButton());
+		rightTankAxis = new FancyAxis(js0, controller, controller.getRightTankAxis(), controller.flipAxis(),
+				controller.getDeadband(),
+				RobotProperties.MIN_MOVE_POWER,
+				RobotProperties.MID_MOVE_POWER);
+		//IntakeInButton = new Button(js0, controller.getIntakeInButton());
+		//IntakeOutButton = new Button(js0, controller.getIntakeOutButton());
+		//IntakeLockButton = new Button(js0, controller.getIntakeLockButton());
 	}
 	
 	// The axis and buttons
 	public static FancyAxis driveAxis;
 	public static FancyAxis rotateAxis;
+	public static FancyAxis rightTankAxis;
+	
 	//public static Button resetButton;
-	public static Button IntakeInButton;
-	public static Button IntakeOutButton;
-	public static Button IntakeLockButton;
+	//public static Button IntakeInButton;
+	//public static Button IntakeOutButton;
+	//public static Button IntakeLockButton;
 }

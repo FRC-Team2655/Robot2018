@@ -11,7 +11,7 @@ public class IntakeSubsystem {
 	}
 	
 	public void Lock(boolean lock) {
-		Robot.intakeLock.set(lock);
+		//Robot.intakeLock.set(lock);
 		
 	}
 	

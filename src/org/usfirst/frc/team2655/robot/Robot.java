@@ -24,16 +24,16 @@ public class Robot extends IterativeRobot {
 	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
 	public static WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
     public static WPI_TalonSRX leftSlave2 = new WPI_TalonSRX(3);
-    public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(4);
+    public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(6);
 	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(5);
-    public static WPI_TalonSRX rightSlave2 = new WPI_TalonSRX(6);
+    public static WPI_TalonSRX rightSlave2 = new WPI_TalonSRX(4);
     
     public static Talon leftIntake = new Talon(7);
     public static Talon rightIntake = new Talon(8);
     
     public static Talon lifterMotor = new Talon(9);
     
-    public static Solenoid intakeLock = new Solenoid(1);
+    //public static Solenoid intakeLock = new Solenoid(1);
     
 	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, leftSlave2, rightMotor, rightSlave1, rightSlave2};
 	
@@ -74,9 +74,12 @@ public class Robot extends IterativeRobot {
 		// Setup the motor controllers
 		for(WPI_TalonSRX m : motors) {
 			m.setInverted(true);
-			m.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
-			m.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		}
+		
+		leftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		leftMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		rightMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		
 		SendableChooser<String> scaleAutoOption = new SendableChooser<>();
 		scaleAutoOption.addDefault("Place on scale", Values.AUTO_SCALE_PLACE);
@@ -89,14 +92,17 @@ public class Robot extends IterativeRobot {
 		// Add stuff to the dashboard
 		SmartDashboard.putBoolean(Values.DRIVE_CUBIC, true);
 		SmartDashboard.putBoolean(Values.ROTATE_CUBIC, false);
-		SmartDashboard.putNumber(Values.GYRO, 0);
-		SmartDashboard.putData(Values.CONTROLLER_SELECT, controllerSelect);
+		SmartDashboard.putBoolean(Values.TANK_MODE, false);
+		//SmartDashboard.putNumber(Values.GYRO, 0);
+		//SmartDashboard.putData(Values.CONTROLLER_SELECT, controllerSelect);
 		
 		//Auto
 		SmartDashboard.putNumber(Values.AUTO_DELAY, 0);
 		SmartDashboard.putBoolean(Values.AUTO_TRY_SWITCH, true);
 		SmartDashboard.putData(Values.AUTO_SCALE_CHOOSER, scaleAutoOption);
 		SmartDashboard.putData(Values.AUTO_CROSS_CHOOSER, autoCrossOption);
+		
+		OI.selectController(OI.controllers.get(0));
 		
 	}
 	
@@ -106,7 +112,7 @@ public class Robot extends IterativeRobot {
 		// Update controller choice
 		IController selected = controllerSelect.getSelected();
 		if(selected != OI.selectedController) {
-			OI.selectController(selected);
+			//OI.selectController(selected);
 		}
 	}
 
@@ -120,10 +126,19 @@ public class Robot extends IterativeRobot {
 		
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
 		double rotation = -1 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
+		double rightTankPower = driveCubic ? OI.rightTankAxis.getValue() : OI.rightTankAxis.getValueLinear();
 				
-		driveBase.drive(power, rotation);
+		if(!rotateCubic) {
+			rotation = Math.copySign(Math.pow(rotation, 3), rotation);
+		}
 		
-		intake.Lock(OI.IntakeLockButton.isPressed());
+		if(SmartDashboard.getBoolean(Values.TANK_MODE, false)) {
+			driveBase.driveTank(power, rightTankPower);
+		}else {
+			driveBase.drive(power, rotation);
+		}
+		
+		/*intake.Lock(OI.IntakeLockButton.isPressed());
 		
 		if(OI.IntakeInButton.isPressed() && !OI.IntakeOutButton.isPressed()) {
 			intake.moveIntake(1);
@@ -131,7 +146,7 @@ public class Robot extends IterativeRobot {
 			intake.moveIntake(-1);
 		}else {
 			intake.moveIntake(0);
-		}
+		}*/
 		
 		int dpad = OI.js0.getPOV();
 		if(dpad == 0) {
