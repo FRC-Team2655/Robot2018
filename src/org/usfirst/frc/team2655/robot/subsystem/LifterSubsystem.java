@@ -15,15 +15,15 @@ public class LifterSubsystem extends Subsystem {
     public void initDefaultCommand() {}
     
     public void LiftRun(double speed) {
-    	Robot.lifterMotor.set(speed);
+    	//Robot.lifterMotor.set(speed);
     } 
     
     public void liftDistance(double speed, double distance) {
     	Math.copySign(speed, distance);
     	int setpoint = encoder.get() + (int)((distance / 9.42) * 1440);
-    	Robot.lifterMotor.set(speed);
+    	//Robot.lifterMotor.set(speed);
     	while(Math.abs(encoder.get()) < Math.abs(setpoint)) ;
-    	Robot.lifterMotor.set(0);
+    	//Robot.lifterMotor.set(0);
     }
     
 }

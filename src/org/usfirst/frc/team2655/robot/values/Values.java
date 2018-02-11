@@ -8,7 +8,12 @@ public class Values {
 	public static final String CURRENT_VALUE = "PID_Graph";
 	public static final String GYRO = "Gyro";
 	public static final String ROTATE_PID = "RotatePID Output";
+	public static final String DRIVE_PID = "DrivePID Output";
 	public static final String TANK_MODE = "Tank Drive Mode";
+	public static final String LEFT_ENC = "Left Encoder";
+	public static final String RIGHT_ENC = "Right Encoder";
+	public static final String VELOCITY_LOOP = "Velocity Closed Loop Mode";
+	
 	
 	public static final String AUTO_SCALE_CHOOSER = "Auto Scale";
 	public static final String AUTO_CROSS_CHOOSER = "Auto Cross";

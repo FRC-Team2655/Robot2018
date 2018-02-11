@@ -74,8 +74,11 @@ public class Autonomous {
 	
 	//This will eventually drive the robit
 	private void drive(Double arg1, Double arg2) {
-		System.out.println("Drive" + " " + arg1 + " " + arg2);
-		
+		double target = Robot.driveBase.getAvgTicks() + (arg1 / 18.8496) * 4096;
+    	Robot.driveBase.setBrake(true);
+    	while(Math.abs(Robot.driveBase.getAvgTicks()) < target) {
+    		
+    	}
 	}
 	//This will eventually rotate the robit
 	private void rotate(Double arg1, Double arg2) {
@@ -87,11 +90,11 @@ public class Autonomous {
 	}
 	
 	private void raiseLifter(Double arg1, Double arg2) {
-		Robot.lifter.liftDistance(1, arg1);
+		//Robot.lifter.liftDistance(1, arg1);
 	}
 	
 	private void output(Double arg1, Double arg2) {
-		Robot.intake.moveIntake((int)(double)arg1);
+		//Robot.intake.moveIntake((int)(double)arg1);
 	}
 
 }

@@ -5,8 +5,8 @@ import org.usfirst.frc.team2655.robot.Robot;
 public class IntakeSubsystem {
 		
 	public void moveIntake(int speed) {
-		Robot.leftIntake.set(speed);
-		Robot.rightIntake.set(speed);
+		//Robot.leftIntake.set(speed);
+		//Robot.rightIntake.set(speed);
 		
 	}
 	
