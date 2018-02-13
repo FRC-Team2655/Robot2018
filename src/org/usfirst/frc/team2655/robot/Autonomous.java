@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import org.usfirst.frc.team2655.robot.values.Values;
+
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous { 
 	
@@ -41,60 +44,81 @@ public class Autonomous {
 		
 	}
 	
-	public void runScript() {
-		
-		for(int i = 0; i < args.size(); i++) {
-			
-			switch(commands.get(i).toUpperCase()) {
-			case "DRIVE":
-				drive(args.get(i), null);
-				break;
-			
-			case "ROTATE":
-				rotate(args.get(i), null);
-				break;
-				
-			case "DELAY":
-				delay(args.get(i), null);
-				break;
-				
-			case "RAISE_LIFTER":
-				raiseLifter(args.get(i), null);
-				break;
-				
-			case "OUTPUT":
-				output(args.get(i), null);
-				break;
-				
-			}
-			
-		}
-		
+	public void putScript(ArrayList<String> commands, ArrayList<Double> args) {
+		this.commands = commands;
+		this.args = args;
 	}
 	
+	String command = "";
+	int commandIndex = -1;
+	Double arg1 = null, arg2 = null;
+	boolean commandDone = true;
+	
+	public void feedAuto() {
+		
+		if(commandDone) {
+			commandIndex++;
+			if(commandIndex < commands.size()) {
+				command = commands.get(commandIndex);
+				arg1 = args.get(commandIndex);
+			}else {
+				command = "DONE";
+				arg1 = null;
+			}
+			SmartDashboard.putString(Values.CURRENT_AUTO, command);
+		}
+		
+		switch(command.toUpperCase()) {
+		case "DRIVE":
+			commandDone = drive(); break;
+		case "ROTATE":
+			commandDone = rotate(); break;
+		case "DELAY":
+			commandDone = delay(); break;
+		case "DONE":
+			break;
+		default:
+			commandDone = true; // Unknown command = skip
+			break;
+		}
+	}
+	
+	
+	double driveTarget = -1;
 	//This will eventually drive the robit
-	private void drive(Double arg1, Double arg2) {
-		double target = Robot.driveBase.getAvgTicks() + (arg1 / 18.8496) * 4096;
-    	Robot.driveBase.setBrake(true);
-    	while(Math.abs(Robot.driveBase.getAvgTicks()) < target) {
-    		
+	private boolean drive() {
+		if(driveTarget == -1) {
+			driveTarget = Robot.driveBase.getAvgTicks() + (arg1 / 18.8496) * 1440;
+	    	Robot.driveBase.setBrake(true);
+		}
+    	if(Math.abs(Robot.driveBase.getAvgTicks()) < Math.abs(driveTarget)) {
+    		Robot.driveBase.drive(Math.copySign(0.5, arg1), 0);
+    		return false;
+    	}else {
+    		driveTarget = -1;
+	    	Robot.driveBase.drive(0, 0);
+	    	Timer.delay(0.1); // Let brake mode do its thing
+	    	Robot.driveBase.setBrake(false);
+	    	return true;
     	}
 	}
 	//This will eventually rotate the robit
-	private void rotate(Double arg1, Double arg2) {
+	private boolean rotate() {
 		Robot.driveBase.rotatePID(arg1);
+		return !Robot.driveBase.rotatePIDController.isEnabled();
 	}
 	
-	private void delay(Double arg1, Double arg2) {
-		Timer.delay(arg1);
-	}
-	
-	private void raiseLifter(Double arg1, Double arg2) {
-		//Robot.lifter.liftDistance(1, arg1);
-	}
-	
-	private void output(Double arg1, Double arg2) {
-		//Robot.intake.moveIntake((int)(double)arg1);
+	private long delayStart = -1;
+	private boolean delay() {
+		if(delayStart == -1) {
+			delayStart = System.currentTimeMillis();
+		}
+		if(System.currentTimeMillis() - delayStart >= arg1) {
+			delayStart = -1;
+			return true;
+		}else {
+			return false;
+		}
 	}
 
 }

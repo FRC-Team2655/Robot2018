@@ -1,5 +1,8 @@
 package org.usfirst.frc.team2655.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.subsystem.DriveBaseSubsystem;
 import org.usfirst.frc.team2655.robot.values.Values;
@@ -37,8 +40,8 @@ public class Robot extends IterativeRobot {
 	
 	// Controller Selector
 	public static SendableChooser<IController> controllerSelect = new SendableChooser<IController>();
-		
-	double p = 0, i = 0, d = 0, f = 0;
+				
+	Autonomous a;
 	
 	/**
 	 * Setup the motor controllers and the drive object
@@ -46,6 +49,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
+		controllerSelect.addDefault(OI.controllers.get(0).getName(), OI.controllers.get(0));
+		for(int i = 1; i < OI.controllers.size(); i++) {
+			IController c = OI.controllers.get(i);
+			controllerSelect.addObject(c.getName(), c);
+		}
 		OI.selectController(OI.controllers.get(0));
 		
 		imu = new ADIS16448_IMU();
@@ -84,10 +92,29 @@ public class Robot extends IterativeRobot {
 		// Add stuff to the dashboard
 		SmartDashboard.putBoolean(Values.DRIVE_CUBIC, true);
 		SmartDashboard.putBoolean(Values.ROTATE_CUBIC, false);
+		SmartDashboard.putData("Select Controller:", controllerSelect);
+		SmartDashboard.putString(Values.CURRENT_AUTO, "");
 		//SmartDashboard.putBoolean(Values.VELOCITY_LOOP, false);
 		
 		//SmartDashboard.putData("LeftClosedLoop", new TalonPIDDisplay(leftMotor, 0, 0, 0, 0.2111));
 	}
+	
+	
+	
+	@Override
+	public void autonomousInit() {
+		a = new Autonomous();
+		a.putScript(new ArrayList<String>(Arrays.asList(new String[] {"DRIVE"})), 
+				new ArrayList<Double>(Arrays.asList(new Double[] {72.0})));
+	}
+
+
+
+	@Override
+	public void autonomousPeriodic() {
+		a.feedAuto();
+	}
+
 
 
 	public void resetSensors() {
@@ -98,11 +125,10 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotPeriodic() {
-		super.robotPeriodic();
 		// Update controller choice
 		IController selected = controllerSelect.getSelected();
 		if(selected != OI.selectedController) {
-			//OI.selectController(selected);
+			OI.selectController(selected);
 		}
 		SmartDashboard.putNumber(Values.GYRO, imu.getAngleZ());
 		SmartDashboard.putNumber(Values.LEFT_ENC, leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
@@ -118,8 +144,8 @@ public class Robot extends IterativeRobot {
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
-		double rotation = -1 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
-				
+		double rotation = -0.3 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
+		
 		if(OI.js0.getRawButtonPressed(2)) {
 			resetSensors();
 		}

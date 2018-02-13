@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.usfirst.frc.team2655.robot.controllers.FancyAxis;
 import org.usfirst.frc.team2655.robot.controllers.IController;
+import org.usfirst.frc.team2655.robot.controllers.PS2Controller;
 import org.usfirst.frc.team2655.robot.controllers.PS4Controller;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -19,6 +20,7 @@ public class OI {
 	// All possible controllers
 	public static List<IController> controllers = Arrays.asList(new IController[] {
 			new PS4Controller(),
+			new PS2Controller()
 			//new PS2Controller(),
 			//new NewLogitech(),
 			//new LogitechController(),

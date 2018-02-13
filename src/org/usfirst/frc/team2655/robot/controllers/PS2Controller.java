@@ -1,6 +1,6 @@
 package org.usfirst.frc.team2655.robot.controllers;
 
-/*public class PS2Controller extends IController {
+public class PS2Controller extends IController {
 
 	
 	
@@ -57,4 +57,4 @@ package org.usfirst.frc.team2655.robot.controllers;
 		return original;
 	}
 
-}*/
+}

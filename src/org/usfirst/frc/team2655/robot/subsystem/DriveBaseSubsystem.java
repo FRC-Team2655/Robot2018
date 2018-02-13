@@ -45,7 +45,7 @@ public class DriveBaseSubsystem extends Subsystem {
     		drive(0, -output);
     	}
     };
-	private final PIDController rotatePIDController = new PIDController(0, 0, 0, 0, rotateSource, rotateOutput);
+	public final PIDController rotatePIDController = new PIDController(0, 0, 0, 0, rotateSource, rotateOutput);
 	private double rotateSetpoint = 0;
 	
     public void initDefaultCommand() {}
@@ -55,6 +55,8 @@ public class DriveBaseSubsystem extends Subsystem {
     		t.setNeutralMode(brakeMode ? NeutralMode.Brake : NeutralMode.Coast);
     	}
     }
+    
+    
     
     /**
      * Drive the robot
@@ -77,7 +79,7 @@ public class DriveBaseSubsystem extends Subsystem {
     		SmartDashboard.putNumber("Target", left);
     	}else {
     		Robot.leftMotor.set(ControlMode.PercentOutput, left);
-    		Robot.rightMotor.set(ControlMode.PercentOutput, right);
+    		Robot.rightMotor.set(ControlMode.PercentOutput, right * .99);
     	}
     }
     
@@ -92,7 +94,7 @@ public class DriveBaseSubsystem extends Subsystem {
      * @return The average number of ticks
      */
     public int getAvgTicks() {
-    	int left = Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) * -1; 
+    	int left = Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID); 
     	int right = Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID); 
     	int avg = (left + right) / 2;
     	return avg;
