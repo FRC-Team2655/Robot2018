@@ -5,34 +5,37 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import org.usfirst.frc.team2655.robot.AutoCommands.AutoCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.DelayCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.DriveCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.RotateCommand;
 import org.usfirst.frc.team2655.robot.values.Values;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous { 
-	
-	public Autonomous() {
-		System.out.println("Auto");
-	}
-	String scriptPath = "C:\\Users\\Platypi\\Desktop\\AutoScripts";
+	String scriptPath = "/auto-scripts";
 	private ArrayList<String> commands = new ArrayList<>();
  	private ArrayList<Double> args = new ArrayList<>();		
 	
 	//Gets the autonomous scripts for the drive and rotate functions
 	public boolean loadScript(String ScriptName) {
-		
+		if(!ScriptName.endsWith(".csv"))
+			ScriptName += ".csv";
 		try {
-			BufferedReader reader = new BufferedReader( new FileReader( new File(scriptPath + "\\" + ScriptName) ) );
+			BufferedReader reader = new BufferedReader( new FileReader( new File(scriptPath + "/" + ScriptName) ) );
 			String currentLine = "";
 			
 			while((currentLine = reader.readLine()) != null) {
 				String[] columns = currentLine.split(",");
 				String CMD = columns[0];
-				double arg = Double.parseDouble(columns[1]);
+				Double arg = null;
+				try{arg = Double.parseDouble(columns[1]); } catch(Exception e) {}
 				commands.add(CMD);
 				args.add(arg);
 			}
+			
 			reader.close();
 			return true;
 			
@@ -49,76 +52,52 @@ public class Autonomous {
 		this.args = args;
 	}
 	
-	String command = "";
+	public AutoCommand getCommand(String commandName) {
+		switch(commandName.toUpperCase()) {
+		case "DRIVE":
+			return new DriveCommand();
+		case "ROTATE": 
+			return new RotateCommand();
+		case "DELAY":
+			return new DelayCommand();
+		default:
+			return null;
+		}
+	}
+	
+	String commandName = "";
 	int commandIndex = -1;
 	Double arg1 = null, arg2 = null;
-	boolean commandDone = true;
-	
+	AutoCommand command;
 	public void feedAuto() {
-		
-		if(commandDone) {
+		if(command == null || command.isDone()) {
+			if(commandIndex == -1) {
+				// Reset all sensors when auto starts.
+				Robot.resetSensors();
+				Timer.delay(0.1);
+			}
 			commandIndex++;
 			if(commandIndex < commands.size()) {
-				command = commands.get(commandIndex);
+				commandName = commands.get(commandIndex);
 				arg1 = args.get(commandIndex);
 			}else {
-				command = "DONE";
+				commandName = "DONE";
 				arg1 = null;
 			}
-			SmartDashboard.putString(Values.CURRENT_AUTO, command);
+			command = getCommand(commandName);
+			if(command != null)
+				command.initCommand(arg1, arg2);
+			SmartDashboard.putString(Values.CURRENT_AUTO, commandName);
 		}
 		
-		switch(command.toUpperCase()) {
-		case "DRIVE":
-			commandDone = drive(); break;
-		case "ROTATE":
-			commandDone = rotate(); break;
-		case "DELAY":
-			commandDone = delay(); break;
-		case "DONE":
-			break;
-		default:
-			commandDone = true; // Unknown command = skip
-			break;
-		}
-	}
-	
-	
-	double driveTarget = -1;
-	//This will eventually drive the robit
-	private boolean drive() {
-		if(driveTarget == -1) {
-			driveTarget = Robot.driveBase.getAvgTicks() + (arg1 / 18.8496) * 1440;
-	    	Robot.driveBase.setBrake(true);
-		}
-    	if(Math.abs(Robot.driveBase.getAvgTicks()) < Math.abs(driveTarget)) {
-    		Robot.driveBase.drive(Math.copySign(0.5, arg1), 0);
-    		return false;
-    	}else {
-    		driveTarget = -1;
-	    	Robot.driveBase.drive(0, 0);
-	    	Timer.delay(0.1); // Let brake mode do its thing
-	    	Robot.driveBase.setBrake(false);
-	    	return true;
-    	}
-	}
-	//This will eventually rotate the robit
-	private boolean rotate() {
-		Robot.driveBase.rotatePID(arg1);
-		return !Robot.driveBase.rotatePIDController.isEnabled();
-	}
-	
-	private long delayStart = -1;
-	private boolean delay() {
-		if(delayStart == -1) {
-			delayStart = System.currentTimeMillis();
-		}
-		if(System.currentTimeMillis() - delayStart >= arg1) {
-			delayStart = -1;
-			return true;
-		}else {
-			return false;
-		}
+		if(command != null && !command.isDone())
+			command.feedCommand();
+		
 	}
 
+	public void killAuto() {
+		if(command != null)
+			command.complete();
+	}
+	
 }

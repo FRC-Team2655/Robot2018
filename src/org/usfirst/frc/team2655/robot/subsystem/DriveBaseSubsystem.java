@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2655.robot.subsystem;
 
+import org.usfirst.frc.team2655.robot.PIDErrorBuffer;
 import org.usfirst.frc.team2655.robot.Robot;
 import org.usfirst.frc.team2655.robot.RobotProperties;
 import org.usfirst.frc.team2655.robot.values.Values;
@@ -17,9 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DriveBaseSubsystem extends Subsystem {
-		
-	// The rotate PID
 	
+	// The rotate PID
+	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(5);
 	private final PIDSource rotateSource = new PIDSource() {
     	@Override
     	public double pidGet() {
@@ -38,17 +39,30 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput rotateOutput = new PIDOutput() {
     	@Override
     	public void pidWrite(double output) {
-    		//SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleZ());
-    		/*if(Math.abs(rotatePIDController.getError()) < 1 && rotatePIDController.isEnabled()) {
+    		SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleZ());
+    		rotateErrorBuffer.put(rotatePIDController.getError());
+    		if(Math.abs(rotateErrorBuffer.average()) < 1 && rotatePIDController.isEnabled()) {
+    			drive(0, 0);
     			rotatePIDController.disable();
-    		}*/
-    		drive(0, -output);
+    			rotateErrorBuffer.clear();
+    		}else {
+    			drive(0, -output);
+    		}
     	}
     };
-	public final PIDController rotatePIDController = new PIDController(0, 0, 0, 0, rotateSource, rotateOutput);
-	private double rotateSetpoint = 0;
+    private final PIDOutput angleCorrectOutput = new PIDOutput() {
+		@Override
+		public void pidWrite(double output) {
+			SmartDashboard.putNumber(Values.ANGLE_CORRECT_PID, Robot.imu.getAngleZ());
+			rotateCorrectOut = -output;
+		}
+    };
+	public final PIDController rotatePIDController = new PIDController(0.01, 0.001, 0.01, 0, rotateSource, rotateOutput);
+	public final PIDController angleCorrectionPIDController = new PIDController(0.009, 0, 0, 0, rotateSource, angleCorrectOutput);
 	
     public void initDefaultCommand() {}
+    
+    public double rotateCorrectOut = 0;
     
     public void setBrake(boolean brakeMode) {
     	for(WPI_TalonSRX t : Robot.motors) {
@@ -57,6 +71,16 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     
+    public DriveBaseSubsystem() {
+    	rotatePIDController.setContinuous(false);
+    	rotatePIDController.setName("Rotate PID");
+    	
+    	angleCorrectionPIDController.setContinuous(false);
+    	angleCorrectionPIDController.setName("Angle Correction PID");
+    	
+    	addChild(rotatePIDController);
+    	addChild(angleCorrectionPIDController);
+    }
     
     /**
      * Drive the robot
@@ -64,29 +88,39 @@ public class DriveBaseSubsystem extends Subsystem {
      * @param rotation Power to rotate with	
      */
     public void drive(double power, double rotation) {
-    	double[] speeds = arcadeDrive(power, rotation, false);
+    	double[] speeds = arcadeDrive(power, -rotation, false);
     	driveTank(speeds[0], speeds[1]);
     }
     
+    public void rotate(double rotation) {
+    	
+    }
+    
     public void driveTank(double left, double right) {
-    	if(SmartDashboard.getBoolean(Values.VELOCITY_LOOP, false)) {
-    		left *= 710.0 * 4096 / 600;
-    		right *= 710.0 * 4096 / 600;
+    	if(SmartDashboard.getBoolean(Values.VELOCITY_LOOP, false) && (left != 0 || right != 0)) {
+    		left *= 850.0;
+    		right *= 850.0;
     		Robot.leftMotor.set(ControlMode.Velocity, left);
-        	//Robot.rightMotor.set(ControlMode.Velocity, right);
-    		
-    		SmartDashboard.putNumber("Output", Robot.leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
-    		SmartDashboard.putNumber("Target", left);
+        	Robot.rightMotor.set(ControlMode.Velocity, right);
     	}else {
     		Robot.leftMotor.set(ControlMode.PercentOutput, left);
-    		Robot.rightMotor.set(ControlMode.PercentOutput, right * .99);
+    		Robot.rightMotor.set(ControlMode.PercentOutput, right);
     	}
     }
     
     public void rotatePID(double degree) {
-    	rotateSetpoint = Robot.imu.getAngleZ() + degree;
-    	rotatePIDController.setSetpoint(rotateSetpoint);
+    	rotatePIDController.setSetpoint(degree);
     	rotatePIDController.enable();
+    }
+    
+    public void setAngleCorrection(boolean enabled) {
+    	if(enabled) {
+    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleZ());
+    		angleCorrectionPIDController.enable();
+    	}else {
+    		rotateCorrectOut = 0;
+    		angleCorrectionPIDController.disable();
+    	}
     }
     
     /**

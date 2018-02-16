@@ -1,20 +1,14 @@
 package org.usfirst.frc.team2655.robot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.subsystem.DriveBaseSubsystem;
 import org.usfirst.frc.team2655.robot.values.Values;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -82,10 +76,10 @@ public class Robot extends IterativeRobot {
 		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		leftMotor.setSensorPhase(true);
 		
-		leftMotor.config_kP(RobotProperties.TALON_PID_ID, 0, RobotProperties.TALON_TIMEOUT);
+		/*leftMotor.config_kP(RobotProperties.TALON_PID_ID, 0.2, RobotProperties.TALON_TIMEOUT);
 		leftMotor.config_kI(RobotProperties.TALON_PID_ID, 0, RobotProperties.TALON_TIMEOUT);
 		leftMotor.config_kD(RobotProperties.TALON_PID_ID, 0, RobotProperties.TALON_TIMEOUT);
-		leftMotor.config_kF(RobotProperties.TALON_PID_ID, 1, RobotProperties.TALON_TIMEOUT);
+		leftMotor.config_kF(RobotProperties.TALON_PID_ID, 1.12, RobotProperties.TALON_TIMEOUT);*/
 		
 		imu.reset(); // Make initial direction 0
 		
@@ -94,18 +88,23 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean(Values.ROTATE_CUBIC, false);
 		SmartDashboard.putData("Select Controller:", controllerSelect);
 		SmartDashboard.putString(Values.CURRENT_AUTO, "");
-		//SmartDashboard.putBoolean(Values.VELOCITY_LOOP, false);
+		SmartDashboard.putBoolean(Values.VELOCITY_LOOP, false);
 		
-		//SmartDashboard.putData("LeftClosedLoop", new TalonPIDDisplay(leftMotor, 0, 0, 0, 0.2111));
+		//SmartDashboard.putData("LeftClosedLoop", new TalonPIDDisplay(leftMotor, 0, 0, 0, 1.12));
+		//SmartDashboard.putData("RightClosedLoop", new TalonPIDDisplay(rightMotor, 0, 0, 0, 1.12));
 	}
 	
-	
+	@Override 
+	public void disabledInit(){
+		if(a != null)
+			a.killAuto();
+	}
 	
 	@Override
 	public void autonomousInit() {
 		a = new Autonomous();
-		a.putScript(new ArrayList<String>(Arrays.asList(new String[] {"DRIVE"})), 
-				new ArrayList<Double>(Arrays.asList(new Double[] {72.0})));
+		a.loadScript("TEST");
+		//resetSensors();
 	}
 
 
@@ -117,8 +116,11 @@ public class Robot extends IterativeRobot {
 
 
 
-	public void resetSensors() {
+	public static void resetSensors() {
 		imu.reset();
+		resetEncoders();
+	}
+	public static void resetEncoders() {
 		leftMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 	}
@@ -133,6 +135,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber(Values.GYRO, imu.getAngleZ());
 		SmartDashboard.putNumber(Values.LEFT_ENC, leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		SmartDashboard.putNumber(Values.RIGHT_ENC, rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
+		//SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
+		//SmartDashboard.putNumber("RightVelocity", rightMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
 	}
 
 	/**
@@ -140,6 +144,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		Robot.driveBase.rotatePIDController.disable();
+		Robot.driveBase.angleCorrectionPIDController.disable();
 		boolean driveCubic = SmartDashboard.getBoolean(Values.DRIVE_CUBIC, true);
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
