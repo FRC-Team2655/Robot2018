@@ -25,7 +25,7 @@ public class Robot extends IterativeRobot {
 	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
 	public static WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
     public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(5);
-	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(6);
+	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
     
 	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, rightMotor, rightSlave1};
 	
