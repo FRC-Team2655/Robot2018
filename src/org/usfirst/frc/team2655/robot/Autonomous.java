@@ -14,12 +14,21 @@ import org.usfirst.frc.team2655.robot.values.Values;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * This class handles autonomous mode based on a set of commands with arguments.
+ * @author Marcus Behel
+ *
+ */
 public class Autonomous { 
 	String scriptPath = "/auto-scripts";
 	private ArrayList<String> commands = new ArrayList<>();
  	private ArrayList<Double> args = new ArrayList<>();		
 	
-	//Gets the autonomous scripts for the drive and rotate functions
+	/**
+	 * Load a set of commands and arguments from a CSV file on the roboRIO
+	 * @param ScriptName The script to load
+	 * @return Was the script successfully loaded
+	 */
 	public boolean loadScript(String ScriptName) {
 		if(!ScriptName.endsWith(".csv"))
 			ScriptName += ".csv";
@@ -47,12 +56,22 @@ public class Autonomous {
 		
 	}
 	
+	/**
+	 * Manually set commands and arguments for auto
+	 * @param commands The commands
+	 * @param args The arguments
+	 */
 	public void putScript(ArrayList<String> commands, ArrayList<Double> args) {
 		this.commands = commands;
 		this.args = args;
 	}
 	
-	public AutoCommand getCommand(String commandName) {
+	/**
+	 * Get a AutoCommand Object ({@link AutoCommands.java}) for the given command
+	 * @param commandName The command
+	 * @return An object or null
+	 */
+	private AutoCommand getCommand(String commandName) {
 		switch(commandName.toUpperCase()) {
 		case "DRIVE":
 			return new DriveCommand();
@@ -69,6 +88,11 @@ public class Autonomous {
 	int commandIndex = -1;
 	Double arg1 = null, arg2 = null;
 	AutoCommand command;
+	
+	/**
+	 * Check if the current command is done and if it is move on to the next one.
+	 * This should be called in autonomousPeriodic (or every 30ms in auto mode)
+	 */
 	public void feedAuto() {
 		if(command == null || command.isDone()) {
 			if(commandIndex == -1) {
@@ -95,6 +119,10 @@ public class Autonomous {
 		
 	}
 
+	/**
+	 * Have the current command complete and stop trying to control systems.
+	 * This should be run in disabledInit (or when auto ends)
+	 */
 	public void killAuto() {
 		if(command != null)
 			command.complete();

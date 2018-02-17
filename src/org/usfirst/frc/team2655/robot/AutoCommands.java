@@ -2,7 +2,19 @@ package org.usfirst.frc.team2655.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * This is a container class for all of the commands used in auto.
+ * @author Marcus Behel
+ *
+ */
 public final class AutoCommands {
+	/**
+	 * The base class for all auto commands.
+	 * This class has init (start), complete (end), and feed (during) functions for auto.
+	 * This class also keeps track of a command's status (started, not started, done)
+	 * @author Marcus Behel
+	 *
+	 */
 	public static abstract class AutoCommand{
 		private boolean isStarted = false;
 		private boolean isDone = false;
@@ -44,6 +56,8 @@ public final class AutoCommands {
 			checkTimeout();
 		}
 	}
+	
+	// Drive with angle correction until a distance
 	public static class DriveCommand extends AutoCommand{
 		
 		public DriveCommand() {
@@ -85,6 +99,8 @@ public final class AutoCommands {
 		}
 		
 	}
+	
+	// Rotate to an absolute position
 	public static class RotateCommand extends AutoCommand{		
 		public RotateCommand() {
 			super(0);
@@ -113,6 +129,8 @@ public final class AutoCommands {
 		}
 		
 	}
+	
+	// Wait a certain amount of time (without blocking the robot code)
 	public static class DelayCommand extends AutoCommand{
 
 		public DelayCommand() {

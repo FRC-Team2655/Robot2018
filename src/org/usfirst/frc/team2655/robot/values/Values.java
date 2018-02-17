@@ -16,16 +16,16 @@ public class Values {
 	public static final String VELOCITY_LOOP = "Velocity Closed Loop Mode";
 	public static final String CURRENT_AUTO = "Current Auto Command";
 	
-	
+	public static final String AUTO_POSITION_CHOOSER = "Auto Starting Position";
 	public static final String AUTO_SCALE_CHOOSER = "Auto Scale";
 	public static final String AUTO_CROSS_CHOOSER = "Auto Cross";
 	public static final String AUTO_DELAY = "Auto Start Delay";
 	public static final String AUTO_TRY_SWITCH = "Try switch";
 	
-	public static final String AUTO_SCALE_PLACE = "ASP";
-	public static final String AUTO_SCALE_MOVE = "ASM";
+	public static final Integer AUTO_SCALE_PLACE = 0;
+	public static final Integer AUTO_SCALE_MOVE = 1;
 	
-	public static final String AUTO_CROSS_CROSS = "ACC";
-	public static final String AUTO_CROSS_DRIVE = "ACD";
+	public static final Integer AUTO_CROSS_CROSS = 1;
+	public static final Integer AUTO_CROSS_DRIVE = 0;
 	
 }
