@@ -83,7 +83,7 @@ public final class AutoCommands {
 		public void complete() {
 			Robot.driveBase.setAngleCorrection(false);
 			Robot.driveBase.drive(0, 0);
-			Timer.delay(0.1);
+			Timer.delay(0.5);
 			Robot.driveBase.setBrake(false);
 			super.complete();
 		}
