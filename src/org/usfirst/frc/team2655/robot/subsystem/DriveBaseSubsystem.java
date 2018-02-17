@@ -20,7 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveBaseSubsystem extends Subsystem {
 	
 	// The rotate PID
-	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(5);
+	//private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(5);
+	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(10);
 	private final PIDSource rotateSource = new PIDSource() {
     	@Override
     	public double pidGet() {
@@ -39,9 +40,19 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput rotateOutput = new PIDOutput() {
     	@Override
     	public void pidWrite(double output) {
-    		SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleZ());
+    		double min = 0.15;
+    		//double max = 0.25;
+    		
+    		if(output != 0 && Math.abs(output) < min) {
+    			output = Math.copySign(min, output);
+    		}
+    		/*if(output != 0 && Math.abs(output) > max) {
+    			output = Math.copySign(max, output);
+    		}*/
+    		//SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleZ());
     		rotateErrorBuffer.put(rotatePIDController.getError());
-    		if(Math.abs(rotateErrorBuffer.average()) < 1 && rotatePIDController.isEnabled()) {
+    		//if(false/*Math.abs(rotateErrorBuffer.average()) < 1 && rotatePIDController.isEnabled()*/) {
+    		if(Math.abs(rotateErrorBuffer.average()) < 2 && rotatePIDController.isEnabled()) {
     			drive(0, 0);
     			rotatePIDController.disable();
     			rotateErrorBuffer.clear();
@@ -55,10 +66,12 @@ public class DriveBaseSubsystem extends Subsystem {
 		public void pidWrite(double output) {
 			SmartDashboard.putNumber(Values.ANGLE_CORRECT_PID, Robot.imu.getAngleZ());
 			rotateCorrectOut = -output;
+			// Use the below code when tuning the angleCorrection PID
+			//drive(0, rotateCorrectOut);
 		}
     };
-	public final PIDController rotatePIDController = new PIDController(0.01, 0.001, 0.01, 0, rotateSource, rotateOutput);
-	public final PIDController angleCorrectionPIDController = new PIDController(0.009, 0, 0, 0, rotateSource, angleCorrectOutput);
+	public final PIDController rotatePIDController = new PIDController(0.045, 0.0007, 0.039, 0, rotateSource, rotateOutput);
+	public final PIDController angleCorrectionPIDController = new PIDController(0.01, 0, 0, 0, rotateSource, angleCorrectOutput);
 	
     public void initDefaultCommand() {}
     
@@ -72,8 +85,12 @@ public class DriveBaseSubsystem extends Subsystem {
     
     
     public DriveBaseSubsystem() {
+    	super("DriveBase");
     	rotatePIDController.setContinuous(false);
     	rotatePIDController.setName("Rotate PID");
+    	
+    	// Set max allowed power for the PID
+    	rotatePIDController.setOutputRange(-0.3, 0.3);
     	
     	angleCorrectionPIDController.setContinuous(false);
     	angleCorrectionPIDController.setName("Angle Correction PID");
@@ -88,7 +105,7 @@ public class DriveBaseSubsystem extends Subsystem {
      * @param rotation Power to rotate with	
      */
     public void drive(double power, double rotation) {
-    	double[] speeds = arcadeDrive(power, -rotation, false);
+    	double[] speeds = arcadeDrive(power, rotation, false);
     	driveTank(speeds[0], speeds[1]);
     }
     

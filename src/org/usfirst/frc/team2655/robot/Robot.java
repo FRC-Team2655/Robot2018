@@ -24,12 +24,10 @@ public class Robot extends IterativeRobot {
 	// Our motor controllers. These will be initialized (created) in robotInit
 	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
 	public static WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
-    public static WPI_TalonSRX leftSlave2 = new WPI_TalonSRX(3);
     public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(5);
 	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(6);
-    public static WPI_TalonSRX rightSlave2 = new WPI_TalonSRX(4);
     
-	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, leftSlave2, rightMotor, rightSlave1, rightSlave2};
+	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, rightMotor, rightSlave1};
 	
 	// The Gyro
 	public static ADIS16448_IMU imu;
@@ -65,18 +63,14 @@ public class Robot extends IterativeRobot {
 		imu = new ADIS16448_IMU();
 				
 		leftSlave1.follow(leftMotor);
-		leftSlave2.follow(leftMotor);
 		
 		rightSlave1.follow(rightMotor);
-		rightSlave2.follow(rightMotor);
 		
 		// Do not allow LiveWindow to control the talons. It breaks follow mode
 		LiveWindow.remove(leftMotor);
 		LiveWindow.remove(rightMotor);
 		LiveWindow.remove(leftSlave1);
-		LiveWindow.remove(leftSlave2);
 		LiveWindow.remove(rightSlave1);
-		LiveWindow.remove(rightSlave2);
 		
 		// Setup the motor controllers
 		for(WPI_TalonSRX m : motors) {
@@ -244,6 +238,8 @@ public class Robot extends IterativeRobot {
 						new ArrayList<Double>(Arrays.asList(new Double[] {196.0})));
 			}
 		}
+		
+		Timer.delay(SmartDashboard.getNumber(Values.AUTO_DELAY, 0));
 	}
 
 	@Override
@@ -288,6 +284,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+				
 		// NO PIDs (just in case they were still alive from auto)
 		Robot.driveBase.rotatePIDController.disable();
 		Robot.driveBase.angleCorrectionPIDController.disable();
@@ -300,7 +297,7 @@ public class Robot extends IterativeRobot {
 		if(OI.js0.getRawButtonPressed(2)) {
 			resetSensors();
 		}
-		
+				
 		driveBase.drive(power, rotation);
 	}
 
