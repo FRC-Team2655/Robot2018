@@ -3,6 +3,7 @@ package org.usfirst.frc.team2655.robot;
 import java.util.Arrays;
 import java.util.List;
 
+import org.usfirst.frc.team2655.robot.controllers.Button;
 import org.usfirst.frc.team2655.robot.controllers.FancyAxis;
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.controllers.PS2Controller;
@@ -50,9 +51,10 @@ public class OI {
 				controller.getDeadband(),
 				RobotProperties.MIN_MOVE_POWER,
 				RobotProperties.MID_MOVE_POWER);
-		//IntakeInButton = new Button(js0, controller.getIntakeInButton());
-		//IntakeOutButton = new Button(js0, controller.getIntakeOutButton());
-		//IntakeLockButton = new Button(js0, controller.getIntakeLockButton());
+		intakeReleaseButton = new Button(js0, controller.getIntakeReleaseButton());
+		intakeInButton = new Button(js0, controller.getIntakeInButton());
+		intakeOutButton = new Button(js0, controller.getIntakeOutButton());
+		resetButton = new Button(js0, controller.getResetButton());
 	}
 	
 	// The axis and buttons
@@ -60,8 +62,8 @@ public class OI {
 	public static FancyAxis rotateAxis;
 	public static FancyAxis rightTankAxis;
 	
-	//public static Button resetButton;
-	//public static Button IntakeInButton;
-	//public static Button IntakeOutButton;
-	//public static Button IntakeLockButton;
+	public static Button resetButton;
+	public static Button intakeReleaseButton;
+	public static Button intakeInButton;
+	public static Button intakeOutButton;
 }

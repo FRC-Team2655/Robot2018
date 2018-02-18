@@ -5,15 +5,21 @@ import java.util.Arrays;
 
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.subsystem.DriveBaseSubsystem;
+import org.usfirst.frc.team2655.robot.subsystem.IntakeSubsystem;
 import org.usfirst.frc.team2655.robot.values.Values;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,14 +32,22 @@ public class Robot extends IterativeRobot {
 	public static WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
     public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(5);
 	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
-    
+	
 	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, rightMotor, rightSlave1};
+		
+	public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, 1);
+	
+	public static VictorSP intakeLeft = new VictorSP(0), intakeRight = new VictorSP(1);
+	public static SpeedControllerGroup intakeMotors = new SpeedControllerGroup(intakeLeft, intakeRight);
+	
+	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 	
 	// The Gyro
 	public static ADIS16448_IMU imu;
 		
 	// Robot Subsystems
 	public static DriveBaseSubsystem driveBase = new DriveBaseSubsystem();
+	public static IntakeSubsystem intake = new IntakeSubsystem();
 	
 	// Controller Selector
 	public static SendableChooser<IController> controllerSelect = new SendableChooser<IController>();
@@ -44,6 +58,8 @@ public class Robot extends IterativeRobot {
 	public static SendableChooser<Integer> autoPositionOption = new SendableChooser<Integer>();
 	
 	public static Autonomous a;
+	
+	public static Compressor compressor = new Compressor(0);
 	
 	/**
 	 * Setup the motor controllers and the drive object
@@ -65,7 +81,7 @@ public class Robot extends IterativeRobot {
 		leftSlave1.follow(leftMotor);
 		
 		rightSlave1.follow(rightMotor);
-		
+				
 		// Do not allow LiveWindow to control the talons. It breaks follow mode
 		LiveWindow.remove(leftMotor);
 		LiveWindow.remove(rightMotor);
@@ -247,6 +263,14 @@ public class Robot extends IterativeRobot {
 		a.feedAuto();
 	}
 
+	
+	
+	@Override
+	public void teleopInit() {
+		compressor.setClosedLoopControl(false);
+		compressor.setClosedLoopControl(true);
+	}
+
 	/**
 	 * Set the IMU to 0
 	 * Set encoders to 0
@@ -277,6 +301,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber(Values.RIGHT_ENC, rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putNumber("RightVelocity", rightMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
+		SmartDashboard.putNumber("LIn", pdp.getCurrent(10));
+		SmartDashboard.putNumber("RIn", pdp.getCurrent(11));
 	}
 	
 	/**
@@ -284,7 +310,22 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-				
+		
+		//INTAKE!!!
+		
+		double intakeSpeed = 0;
+		if(OI.intakeInButton.isPressed() && !OI.intakeOutButton.isPressed()) {
+			intakeSpeed = 0.75;
+		}
+		if(OI.intakeOutButton.isPressed() && !OI.intakeInButton.isPressed()) {
+			intakeSpeed = -0.75;
+		}
+		
+		intake.setLock(!OI.intakeReleaseButton.isPressed());
+		intake.moveIntake(intakeSpeed);
+		
+		// DRIVE!!!
+		
 		// NO PIDs (just in case they were still alive from auto)
 		Robot.driveBase.rotatePIDController.disable();
 		Robot.driveBase.angleCorrectionPIDController.disable();
@@ -294,7 +335,7 @@ public class Robot extends IterativeRobot {
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
 		double rotation = -0.3 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
 		
-		if(OI.js0.getRawButtonPressed(2)) {
+		if(OI.resetButton.isPressed()) {
 			resetSensors();
 		}
 				
@@ -303,7 +344,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testPeriodic() {
-		if(OI.js0.getRawButtonPressed(2)) {
+		if(OI.resetButton.isPressed()) {
 			resetSensors();
 		}
 	}

@@ -29,20 +29,17 @@ public class PS4Controller extends IController {
 
 	@Override
 	public int getIntakeInButton() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 6;
 	}
 
 	@Override
 	public int getIntakeOutButton() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 5;
 	}
 
 	@Override
-	public int getIntakeLockButton() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getIntakeReleaseButton() {
+		return 7;
 	}
 
 	@Override
@@ -53,6 +50,11 @@ public class PS4Controller extends IController {
 	@Override
 	public double adjustAxis(double original) {
 		return original;
+	}
+
+	@Override
+	public int getResetButton() {
+		return 2;
 	}
 
 }

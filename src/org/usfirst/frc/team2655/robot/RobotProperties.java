@@ -5,6 +5,9 @@ public class RobotProperties {
 	public static final double MIN_MOVE_POWER = 0.0; // Power needed to start moving the robot
 	public static final double MID_MOVE_POWER = 0.5; // The medium power for the cubic funtion of an axis
 	
+	public static final int LEFT_IN_CHN = 10;
+	public static final int RIGHT_IN_CHN = 11;
+	
 	// Talon SRX config
 
 	/* Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops.  

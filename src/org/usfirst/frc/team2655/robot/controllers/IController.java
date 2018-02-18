@@ -19,9 +19,9 @@ public abstract class IController {
 	public abstract int getRightTankAxis();
 	
 	// Create a function to get the id for each button's action
-	//public abstract int getResetButton();
+	public abstract int getResetButton();
 	public abstract int getIntakeInButton();
 	public abstract int getIntakeOutButton();
-	public abstract int getIntakeLockButton();
+	public abstract int getIntakeReleaseButton();
 	
 }
