@@ -77,7 +77,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		// Allow the driver to selectr a controller
+		// Allow the driver to select a controller
 		controllerSelect.addDefault(OI.controllers.get(0).getName(), OI.controllers.get(0));
 		for(int i = 1; i < OI.controllers.size(); i++) {
 			IController c = OI.controllers.get(i);
@@ -178,6 +178,8 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void autonomousInit() {
+		
+		driveBase.setBrake(true);
 		
 		// Get data from the dashboard
 		int position = autoPositionOption.getSelected();
@@ -287,8 +289,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		// NO PIDs (just in case they were still alive from auto)
-		Robot.driveBase.rotatePIDController.disable();
-		Robot.driveBase.angleCorrectionPIDController.disable();
+		driveBase.rotatePIDController.disable();
+		driveBase.angleCorrectionPIDController.disable();
+		driveBase.setBrake(false);
 		lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		compressor.setClosedLoopControl(false);
 		compressor.setClosedLoopControl(true);

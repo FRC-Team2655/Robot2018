@@ -58,13 +58,13 @@ public final class AutoCommands {
 	}
 	
 	// Drive with angle correction until a distance
-	public static class DriveCommand extends AutoCommand{
-		
+	public static class DriveCommand extends AutoCommand{		
 		public DriveCommand() {
 			super(0);
 		}
 
 		private double targetDistance;
+		private double distanceLeft;
 		@Override
 		public void initCommand(Double arg1, Double arg2) {
 			if(arg1 == null) {
@@ -73,8 +73,8 @@ public final class AutoCommands {
 			}
 			Robot.resetEncoders();
 			Timer.delay(0.1); // Wait for encoders to reset
-			Robot.driveBase.setBrake(true);
 			targetDistance = -arg1 / 18.8496 * 4096;
+			distanceLeft = targetDistance;
 			Robot.driveBase.setAngleCorrection(true);
 			super.initCommand(arg1, arg2);
 		}
@@ -83,15 +83,19 @@ public final class AutoCommands {
 		public void complete() {
 			Robot.driveBase.setAngleCorrection(false);
 			Robot.driveBase.drive(0, 0);
-			Timer.delay(0.5);
-			Robot.driveBase.setBrake(false);
 			super.complete();
 		}
 
 		@Override
 		public void feedCommand() {
-			if(Math.abs(Robot.driveBase.getAvgTicks()) < Math.abs(targetDistance)) {
-				Robot.driveBase.drive(Math.copySign(0.5, targetDistance), Robot.driveBase.rotateCorrectOut);
+			double ticks = Robot.driveBase.getAvgTicks();
+			distanceLeft = targetDistance - ticks;
+			double speed = 0.5;
+			if(Math.abs(distanceLeft) < 8192) { 
+				speed = 0.2; // Slow down to reduce overshoot
+			}
+			if(Math.abs(ticks) < Math.abs(targetDistance)) {
+				Robot.driveBase.drive(Math.copySign(speed, targetDistance), Robot.driveBase.rotateCorrectOut);
 			}else {
 				complete();
 			}
@@ -111,13 +115,11 @@ public final class AutoCommands {
 				complete();
 				return;
 			}
-			Robot.driveBase.setBrake(true);
 			Robot.driveBase.rotatePID(arg1);
 			super.initCommand(arg1, arg2);
 		}
 		@Override
 		public void complete() {
-			Robot.driveBase.setBrake(false);
 			super.complete();
 		}
 		@Override

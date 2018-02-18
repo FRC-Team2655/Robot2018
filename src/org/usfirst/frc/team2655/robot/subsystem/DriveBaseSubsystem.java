@@ -48,10 +48,7 @@ public class DriveBaseSubsystem extends Subsystem {
     		if(Math.abs(rotateErrorBuffer.average()) < 2 && rotatePIDController.isEnabled()) {
     			rotatePIDController.disable();
     			rotateErrorBuffer.clear();
-    			setBrake(true);
     			drive(0, 0);
-    			Timer.delay(0.5);
-    			setBrake(false);
     		}else {
     			drive(0, output);
     		}
@@ -60,13 +57,13 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput angleCorrectOutput = new PIDOutput() {
 		@Override
 		public void pidWrite(double output) {
-			rotateCorrectOut = -output;
+			rotateCorrectOut = output;
 			// Use the below code when tuning the angleCorrection PID
 			//drive(0, rotateCorrectOut);
 		}
     };
 	public final PIDController rotatePIDController = new PIDController(0.005, 0.0000003, 0.002, 0, rotateSource, rotateOutput);
-	public final PIDController angleCorrectionPIDController = new PIDController(0, 0, 0, 0, rotateSource, angleCorrectOutput);
+	public final PIDController angleCorrectionPIDController = new PIDController(0.01, 0, 0, 0, rotateSource, angleCorrectOutput);
 	
     public void initDefaultCommand() {}
     
