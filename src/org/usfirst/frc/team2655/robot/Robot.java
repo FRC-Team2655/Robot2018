@@ -152,11 +152,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean(Values.AUTO_TRY_SWITCH, true);
 		SmartDashboard.putData(Values.AUTO_SCALE_CHOOSER, autoScaleOption);
 		SmartDashboard.putData(Values.AUTO_CROSS_CHOOSER, autoCrossOption);	
-		
-		SmartDashboard.putNumber("RotateSpeed", 0.4);
-		
-		//SmartDashboard.putData("LeftClosedLoop", new TalonPIDDisplay(leftMotor, 0, 0, 0, 1.12));
-		//SmartDashboard.putData("RightClosedLoop", new TalonPIDDisplay(rightMotor, 0, 0, 0, 1.12));
 	}
 	
 	@Override 
@@ -291,6 +286,9 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
+		// NO PIDs (just in case they were still alive from auto)
+		Robot.driveBase.rotatePIDController.disable();
+		Robot.driveBase.angleCorrectionPIDController.disable();
 		lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		compressor.setClosedLoopControl(false);
 		compressor.setClosedLoopControl(true);
@@ -314,7 +312,6 @@ public class Robot extends IterativeRobot {
 		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 	}
 	
-	private double or = 0.4;
 	@Override
 	public void robotPeriodic() {
 		// Update controller choice
@@ -332,12 +329,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("LifterTop", lifter.isTopPressed());
 		SmartDashboard.putBoolean("LifterBottom", lifter.isBottomPressed());
 		SmartDashboard.putNumber("LifterEncoder", lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
-		double newOR = SmartDashboard.getNumber("RotateSpeed", 0.4);
-		if(newOR != or) {
-			or = Math.abs(newOR);
-			driveBase.rotatePIDController.disable();
-			driveBase.rotatePIDController.setOutputRange(-or, or);
-		}
 	}
 	
 	/**
@@ -345,7 +336,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		
+				
 		// LIFTER!!!
 		
 		if(lifter.isBottomPressed()) {
@@ -377,9 +368,6 @@ public class Robot extends IterativeRobot {
 		
 		// DRIVE!!!
 		
-		// NO PIDs (just in case they were still alive from auto)
-		Robot.driveBase.rotatePIDController.disable();
-		Robot.driveBase.angleCorrectionPIDController.disable();
 		boolean driveCubic = SmartDashboard.getBoolean(Values.DRIVE_CUBIC, true);
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
@@ -395,6 +383,7 @@ public class Robot extends IterativeRobot {
 			resetSensors();
 		}
 				
+		SmartDashboard.putNumber("Speed", rotation);
 		driveBase.drive(power, rotation);
 	}
 

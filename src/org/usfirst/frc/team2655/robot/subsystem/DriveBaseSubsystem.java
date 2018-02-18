@@ -3,7 +3,6 @@ package org.usfirst.frc.team2655.robot.subsystem;
 import org.usfirst.frc.team2655.robot.PIDErrorBuffer;
 import org.usfirst.frc.team2655.robot.Robot;
 import org.usfirst.frc.team2655.robot.RobotProperties;
-import org.usfirst.frc.team2655.robot.values.Values;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -13,15 +12,14 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DriveBaseSubsystem extends Subsystem {
 	
 	// The rotate PID
-	//private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(5);
-	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(10);
+	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(20);
 	private final PIDSource rotateSource = new PIDSource() {
     	@Override
     	public double pidGet() {
@@ -42,16 +40,18 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput rotateOutput = new PIDOutput() {
     	@Override
     	public void pidWrite(double output) {
-    		double min = 0.2;
+    		double min = 0.15;
     		if(output != 0 && Math.abs(output) < min) {
     			output = Math.copySign(min, output);
     		}
-    		SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleX());
     		rotateErrorBuffer.put(rotatePIDController.getError());
     		if(Math.abs(rotateErrorBuffer.average()) < 2 && rotatePIDController.isEnabled()) {
-    			drive(0, 0);
     			rotatePIDController.disable();
     			rotateErrorBuffer.clear();
+    			setBrake(true);
+    			drive(0, 0);
+    			Timer.delay(0.5);
+    			setBrake(false);
     		}else {
     			drive(0, output);
     		}
@@ -60,13 +60,12 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput angleCorrectOutput = new PIDOutput() {
 		@Override
 		public void pidWrite(double output) {
-			SmartDashboard.putNumber(Values.ANGLE_CORRECT_PID, Robot.imu.getAngleX());
 			rotateCorrectOut = -output;
 			// Use the below code when tuning the angleCorrection PID
 			//drive(0, rotateCorrectOut);
 		}
     };
-	public final PIDController rotatePIDController = new PIDController(0, 0, 0, 0, rotateSource, rotateOutput);
+	public final PIDController rotatePIDController = new PIDController(0.005, 0.0000003, 0.002, 0, rotateSource, rotateOutput);
 	public final PIDController angleCorrectionPIDController = new PIDController(0, 0, 0, 0, rotateSource, angleCorrectOutput);
 	
     public void initDefaultCommand() {}
@@ -86,7 +85,7 @@ public class DriveBaseSubsystem extends Subsystem {
     	rotatePIDController.setName("Rotate PID");
     	
     	// Set max allowed power for the PID
-    	rotatePIDController.setOutputRange(-0.4, 0.4);
+    	rotatePIDController.setOutputRange(-0.3, 0.3);
     	
     	angleCorrectionPIDController.setContinuous(false);
     	angleCorrectionPIDController.setName("Angle Correction PID");
@@ -111,7 +110,7 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void rotatePID(double degree) {
-    	rotatePIDController.setSetpoint(degree);
+    	rotatePIDController.setSetpoint(-degree);
     	rotatePIDController.enable();
     }
     
