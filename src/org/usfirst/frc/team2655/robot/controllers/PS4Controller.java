@@ -54,7 +54,7 @@ public class PS4Controller extends IController {
 
 	@Override
 	public int getResetButton() {
-		return 2;
+		return 4;
 	}
 
 }

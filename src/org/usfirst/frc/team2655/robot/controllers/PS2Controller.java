@@ -56,7 +56,7 @@ public class PS2Controller extends IController {
 
 	@Override
 	public int getResetButton() {
-		return 3;
+		return 1;
 	}
 
 }

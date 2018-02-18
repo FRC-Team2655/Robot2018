@@ -25,7 +25,9 @@ public class DriveBaseSubsystem extends Subsystem {
 	private final PIDSource rotateSource = new PIDSource() {
     	@Override
     	public double pidGet() {
-    		return Robot.imu.getAngleZ();
+    		if(Robot.imu != null)
+    			return Robot.imu.getAngleX();
+    		return 0;
     	}
 
 		@Override
@@ -40,38 +42,32 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput rotateOutput = new PIDOutput() {
     	@Override
     	public void pidWrite(double output) {
-    		double min = 0.15;
-    		//double max = 0.25;
-    		
+    		double min = 0.2;
     		if(output != 0 && Math.abs(output) < min) {
     			output = Math.copySign(min, output);
     		}
-    		/*if(output != 0 && Math.abs(output) > max) {
-    			output = Math.copySign(max, output);
-    		}*/
-    		//SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleZ());
+    		SmartDashboard.putNumber(Values.ROTATE_PID, Robot.imu.getAngleX());
     		rotateErrorBuffer.put(rotatePIDController.getError());
-    		//if(false/*Math.abs(rotateErrorBuffer.average()) < 1 && rotatePIDController.isEnabled()*/) {
     		if(Math.abs(rotateErrorBuffer.average()) < 2 && rotatePIDController.isEnabled()) {
     			drive(0, 0);
     			rotatePIDController.disable();
     			rotateErrorBuffer.clear();
     		}else {
-    			drive(0, -output);
+    			drive(0, output);
     		}
     	}
     };
     private final PIDOutput angleCorrectOutput = new PIDOutput() {
 		@Override
 		public void pidWrite(double output) {
-			SmartDashboard.putNumber(Values.ANGLE_CORRECT_PID, Robot.imu.getAngleZ());
+			SmartDashboard.putNumber(Values.ANGLE_CORRECT_PID, Robot.imu.getAngleX());
 			rotateCorrectOut = -output;
 			// Use the below code when tuning the angleCorrection PID
 			//drive(0, rotateCorrectOut);
 		}
     };
-	public final PIDController rotatePIDController = new PIDController(0.045, 0.0007, 0.039, 0, rotateSource, rotateOutput);
-	public final PIDController angleCorrectionPIDController = new PIDController(0.01, 0, 0, 0, rotateSource, angleCorrectOutput);
+	public final PIDController rotatePIDController = new PIDController(0, 0, 0, 0, rotateSource, rotateOutput);
+	public final PIDController angleCorrectionPIDController = new PIDController(0, 0, 0, 0, rotateSource, angleCorrectOutput);
 	
     public void initDefaultCommand() {}
     
@@ -90,7 +86,7 @@ public class DriveBaseSubsystem extends Subsystem {
     	rotatePIDController.setName("Rotate PID");
     	
     	// Set max allowed power for the PID
-    	rotatePIDController.setOutputRange(-0.3, 0.3);
+    	rotatePIDController.setOutputRange(-0.4, 0.4);
     	
     	angleCorrectionPIDController.setContinuous(false);
     	angleCorrectionPIDController.setName("Angle Correction PID");
@@ -109,20 +105,9 @@ public class DriveBaseSubsystem extends Subsystem {
     	driveTank(speeds[0], speeds[1]);
     }
     
-    public void rotate(double rotation) {
-    	
-    }
-    
     public void driveTank(double left, double right) {
-    	if(SmartDashboard.getBoolean(Values.VELOCITY_LOOP, false) && (left != 0 || right != 0)) {
-    		left *= 850.0;
-    		right *= 850.0;
-    		Robot.leftMotor.set(ControlMode.Velocity, left);
-        	Robot.rightMotor.set(ControlMode.Velocity, right);
-    	}else {
-    		Robot.leftMotor.set(ControlMode.PercentOutput, left);
-    		Robot.rightMotor.set(ControlMode.PercentOutput, right);
-    	}
+    	Robot.leftMotor.set(ControlMode.PercentOutput, left);
+    	Robot.rightMotor.set(ControlMode.PercentOutput, right);
     }
     
     public void rotatePID(double degree) {
@@ -131,8 +116,8 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void setAngleCorrection(boolean enabled) {
-    	if(enabled) {
-    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleZ());
+    	if(enabled && Robot.imu != null) {
+    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleX());
     		angleCorrectionPIDController.enable();
     	}else {
     		rotateCorrectOut = 0;
