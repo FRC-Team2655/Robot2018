@@ -1,6 +1,6 @@
 package org.usfirst.frc.team2655.robot.controllers;
 
-public class PS2Controller extends IController {
+/*public class PS2Controller extends IController {
 
 	
 	
@@ -59,4 +59,16 @@ public class PS2Controller extends IController {
 		return 1;
 	}
 
-}
+	@Override
+	public int getUpAxis() {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+
+	@Override
+	public int getDownAxis() {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+
+}*/

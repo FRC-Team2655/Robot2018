@@ -25,7 +25,6 @@ public class LifterSubsystem extends Subsystem {
     
     // MAKE SURE (+) is UP
     public void lift(double speed) {
-    	if(false) {
     	speed = adjustSpeed(speed);
     	if((speed > 0 && !isTopPressed()) || (speed < 0 && !isBottomPressed())) {
     		Robot.lifterMotor.set(speed);
@@ -33,7 +32,6 @@ public class LifterSubsystem extends Subsystem {
     		Robot.lifterMotor.set(0.15); // This speed holds the current height
     	}else {
     		Robot.lifterMotor.set(0);
-    	}
     	}
     } 
     

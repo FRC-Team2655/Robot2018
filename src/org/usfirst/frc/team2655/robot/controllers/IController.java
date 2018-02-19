@@ -17,11 +17,15 @@ public abstract class IController {
 	public abstract int getDriveAxis();
 	public abstract int getRotateAxis();
 	public abstract int getRightTankAxis();
+	public abstract int getUpAxis();
+	public abstract int getDownAxis();
 	
 	// Create a function to get the id for each button's action
 	public abstract int getResetButton();
 	public abstract int getIntakeInButton();
 	public abstract int getIntakeOutButton();
 	public abstract int getIntakeReleaseButton();
+	public abstract int getLifterDownButton();
+	public abstract int getLifterUpButton();
 	
 }

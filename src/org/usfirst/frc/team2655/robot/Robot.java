@@ -71,6 +71,9 @@ public class Robot extends IterativeRobot {
 	
 	public static Compressor compressor = new Compressor(0);
 	
+	private static boolean autoLifterUp = false;
+	private static boolean autoLifterDown = false;
+	
 	/**
 	 * Setup the motor controllers and the drive object
 	 */
@@ -78,11 +81,6 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		
 		// Allow the driver to select a controller
-		controllerSelect.addDefault(OI.controllers.get(0).getName(), OI.controllers.get(0));
-		for(int i = 1; i < OI.controllers.size(); i++) {
-			IController c = OI.controllers.get(i);
-			controllerSelect.addObject(c.getName(), c);
-		}
 		OI.selectController(OI.controllers.get(0));
 		
 		// Setup IMU and Motors
@@ -320,7 +318,7 @@ public class Robot extends IterativeRobot {
 		// Update controller choice
 		IController selected = controllerSelect.getSelected();
 		if(selected != OI.selectedController) {
-			OI.selectController(selected);
+			//OI.selectController(selected);
 		}
 		// Update dashboard values as needed
 		if(imu != null)
@@ -342,16 +340,43 @@ public class Robot extends IterativeRobot {
 				
 		// LIFTER!!!
 		
+		if(OI.autoDownButton.isPressed()) {
+			autoLifterDown = true;
+			autoLifterUp = false;
+		}
+		
+		if(OI.autoUpButton.isPressed()) {
+			autoLifterUp = true;
+			autoLifterDown = false;
+		}
+		
+		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 1820) {
+			autoLifterUp = false;
+		}
+		
 		if(lifter.isBottomPressed()) {
+			autoLifterDown = false;
 			lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		}
 		
 		double lifterSpeed = 0;
-		switch(OI.js0.getPOV()) {
-		case 0:
-			lifterSpeed = 0.65; break;
-		case 180:
-			lifterSpeed = -0.2; break;
+		double upSpeed = OI.lifterUpAxis.getValueLinear();
+		double downSpeed = OI.lifterDownAxis.getValueLinear();
+		if(upSpeed > 0 && downSpeed <= 0) {
+			lifterSpeed = 0.85 * upSpeed;
+			autoLifterUp = false;
+			autoLifterDown = false;
+		}else if(downSpeed > 0 && upSpeed <= 0) {
+			lifterSpeed = -0.35 * downSpeed;
+			autoLifterUp = false;
+			autoLifterDown = false;
+		}
+		
+		if(autoLifterDown) {
+			lifterSpeed = -0.35;
+		}
+		if(autoLifterUp) {
+			lifterSpeed = 0.85;
 		}
 		
 		lifter.lift(lifterSpeed);
@@ -379,7 +404,7 @@ public class Robot extends IterativeRobot {
 		
 		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 5000) {
 			power = OI.driveAxis.getValueLinear() * 0.3;
-			rotation = OI.rotateAxis.getValueLinear() * 0.3;
+			rotation = OI.rotateAxis.getValueLinear() * -0.3;
 		}
 		
 		if(OI.resetButton.isPressed()) {

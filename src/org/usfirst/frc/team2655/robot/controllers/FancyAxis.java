@@ -13,9 +13,11 @@ public class FancyAxis {
 	
 	private boolean flipAxis;
 	
-	private double deadband;
-	private double minPower;
-	private double midPower;
+	private double deadband = 0;
+	private double minPower = 0;
+	private double midPower = 0.5;
+	
+	private double maxSpeed = 1;
 	
 	private double[] coefficents;
 	
@@ -29,7 +31,7 @@ public class FancyAxis {
 	
 	
 
-	public FancyAxis(Joystick joystick, IController controller, int axis, boolean flipAxis, double deadband, double minPower, double midPower) {
+	public FancyAxis(Joystick joystick, IController controller, int axis, boolean flipAxis, double deadband, double minPower, double midPower, double maxSpeed) {
 		this.joystick = joystick;
 		this.controller = controller;
 		this.axis = axis;
@@ -37,6 +39,7 @@ public class FancyAxis {
 		this.deadband = deadband;
 		this.minPower = minPower;
 		this.midPower = midPower;
+		this.maxSpeed = maxSpeed;
 		updateRegression();
 	}
 
@@ -47,8 +50,8 @@ public class FancyAxis {
 		double midDeadband = (1 - deadband) / 2 + deadband; // Middle of deadband and 1
 		
 		// These are coordinates used for the linear regression
-		double[] x = new double[] { deadband, midDeadband, midDeadband + .01, 1};
-		double[] y = new double[] {minPower, midPower, midPower, 1};
+		double[] x = new double[] { deadband, midDeadband, midDeadband + .01, maxSpeed};
+		double[] y = new double[] {minPower, midPower, midPower, maxSpeed};
 
 		// Setup the points
 		WeightedObservedPoints obs = new WeightedObservedPoints();

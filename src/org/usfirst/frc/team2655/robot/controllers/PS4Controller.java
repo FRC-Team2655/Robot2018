@@ -39,7 +39,7 @@ public class PS4Controller extends IController {
 
 	@Override
 	public int getIntakeReleaseButton() {
-		return 7;
+		return 1;
 	}
 
 	@Override
@@ -54,7 +54,27 @@ public class PS4Controller extends IController {
 
 	@Override
 	public int getResetButton() {
+		return 10;
+	}
+
+	@Override
+	public int getUpAxis() {
 		return 4;
+	}
+
+	@Override
+	public int getDownAxis() {
+		return 3;
+	}
+
+	@Override
+	public int getLifterDownButton() {
+		return 3;
+	}
+
+	@Override
+	public int getLifterUpButton() {
+		return 2;
 	}
 
 }
