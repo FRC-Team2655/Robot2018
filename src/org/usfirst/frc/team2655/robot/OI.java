@@ -40,7 +40,7 @@ public class OI {
 		driveAxis = new FancyAxis(js0, controller, controller.getDriveAxis(), controller.flipAxis(),
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER, 
-				RobotProperties.MID_MOVE_POWER, 0.75);
+				RobotProperties.MID_MOVE_POWER, 1);
 		rotateAxis = new FancyAxis(js0, controller, controller.getRotateAxis(), controller.flipAxis(),
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER,

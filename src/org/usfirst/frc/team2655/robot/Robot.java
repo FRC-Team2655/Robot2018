@@ -50,6 +50,7 @@ public class Robot extends IterativeRobot {
 	// Lifter
 	public static DigitalInput lifterTopSwitch = new DigitalInput(8);
 	public static DigitalInput lifterBottomSwitch = new DigitalInput(9);
+	public static DigitalInput intakeSwitch = new DigitalInput(7);
 	
 	// The Gyro
 	public static ADIS16448_IMU imu;
@@ -290,7 +291,6 @@ public class Robot extends IterativeRobot {
 		driveBase.rotatePIDController.disable();
 		driveBase.angleCorrectionPIDController.disable();
 		driveBase.setBrake(false);
-		lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		compressor.setClosedLoopControl(false);
 		compressor.setClosedLoopControl(true);
 	}
@@ -330,6 +330,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("LifterTop", lifter.isTopPressed());
 		SmartDashboard.putBoolean("LifterBottom", lifter.isBottomPressed());
 		SmartDashboard.putNumber("LifterEncoder", lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
+		SmartDashboard.putBoolean("IntakeSwitch", intake.isSwitchPressed());
 	}
 	
 	/**
@@ -367,13 +368,13 @@ public class Robot extends IterativeRobot {
 			autoLifterUp = false;
 			autoLifterDown = false;
 		}else if(downSpeed > 0 && upSpeed <= 0) {
-			lifterSpeed = -0.35 * downSpeed;
+			lifterSpeed = -0.4 * downSpeed;
 			autoLifterUp = false;
 			autoLifterDown = false;
 		}
 		
 		if(autoLifterDown) {
-			lifterSpeed = -0.35;
+			lifterSpeed = -0.4;
 		}
 		if(autoLifterUp) {
 			lifterSpeed = 0.85;

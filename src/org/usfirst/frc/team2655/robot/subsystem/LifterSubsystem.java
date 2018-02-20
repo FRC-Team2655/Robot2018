@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class LifterSubsystem extends Subsystem {
 	
 	// Number of encoder ticks before limiting speed
-	private double lowerThreshold = 400;
+	private double lowerThreshold = 300;
 	private double upperThreshold = 6500;
 	
     public void initDefaultCommand() {}
