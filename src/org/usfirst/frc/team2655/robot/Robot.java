@@ -396,7 +396,9 @@ public class Robot extends IterativeRobot {
 			lifterSpeed = -0.4;
 		}
 		if(autoLifterUp) {
-			lifterSpeed = 0.95;
+			double percentageLift = 1.3 - lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) / 2020.0;
+			percentageLift = Math.min(Math.max(.5, percentageLift), 1.0);
+			lifterSpeed = 0.85 * percentageLift;
 		}
 		
 		lifter.lift(lifterSpeed);
