@@ -92,7 +92,7 @@ public final class AutoCommands {
 			distanceLeft = targetDistance - ticks;
 			double speed = 0.5;
 			if(Math.abs(distanceLeft) < 8192) { 
-				speed = 0.2; // Slow down to reduce overshoot
+				speed = 0.3; // Slow down to reduce overshoot
 			}
 			if(Math.abs(ticks) < Math.abs(targetDistance)) {
 				Robot.driveBase.drive(Math.copySign(speed, targetDistance), Robot.driveBase.rotateCorrectOut);
@@ -147,6 +147,76 @@ public final class AutoCommands {
 			}
 			setTimeout((long)(arg1 * 1000.0));
 			super.initCommand(arg1, arg2);
+		}
+		
+		
+		
+	}
+	public static class OutputCommand extends DelayCommand{
+		@Override
+		public void feedCommand() {
+			Robot.intake.moveIntake(-0.75);
+			super.feedCommand();
+		}
+		@Override
+		public void complete() {
+			Robot.intake.moveIntake(0);
+			super.complete();
+		}
+	}
+	public static class RaiseLifterCommand extends AutoCommand{
+
+		public RaiseLifterCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Double arg1, Double arg2) {
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			Robot.lifter.lift(0);
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			if(!Robot.lifter.isTopPressed()) {
+				Robot.lifter.lift(0.85);
+			}else {
+				complete();
+			}
+			super.feedCommand();
+		}
+		
+	}
+	public static class LowerLifterCommand extends AutoCommand{
+
+		public LowerLifterCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Double arg1, Double arg2) {
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			Robot.lifter.lift(0);
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			if(!Robot.lifter.isBottomPressed()) {
+				Robot.lifter.lift(-0.4);
+			}else {
+				complete();
+			}
+			super.feedCommand();
 		}
 		
 		

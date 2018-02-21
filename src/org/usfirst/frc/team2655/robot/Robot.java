@@ -1,8 +1,5 @@
 package org.usfirst.frc.team2655.robot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.subsystem.DriveBaseSubsystem;
 import org.usfirst.frc.team2655.robot.subsystem.IntakeSubsystem;
@@ -41,6 +38,8 @@ public class Robot extends IterativeRobot {
 	public static WPI_TalonSRX lifterSlave1 = new WPI_TalonSRX(7);
 	
 	public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, 1);
+	
+	public static VictorSP climber = new VictorSP(2);
 	
 	public static VictorSP intakeLeft = new VictorSP(0), intakeRight = new VictorSP(1);
 	public static SpeedControllerGroup intakeMotors = new SpeedControllerGroup(intakeLeft, intakeRight);
@@ -165,38 +164,90 @@ public class Robot extends IterativeRobot {
 	 * @return The data
 	 */
 	public String getFieldData() {
-		String gameData;
-		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		String gameData = "";
 		// Retry after 100ms if there is no data at first
-		if(gameData == null ||gameData.length() == 0) {
-			Timer.delay(0.1);
+		long startTime = System.currentTimeMillis();
+		while(gameData.length() == 0) {
 			gameData = DriverStation.getInstance().getGameSpecificMessage();
+			long now = System.currentTimeMillis();
+			if(now - startTime > 5000)
+				break;
 		}
 		return gameData;
 	}
 	
-	@Override
-	public void autonomousInit() {
-		
-		driveBase.setBrake(true);
-		
+	public String getAutoScript(String gameData) {
 		// Get data from the dashboard
 		int position = autoPositionOption.getSelected();
 		boolean trySwitch = SmartDashboard.getBoolean(Values.AUTO_TRY_SWITCH, true);
 		boolean driveCross = autoCrossOption.getSelected() == Values.AUTO_CROSS_CROSS;
 		boolean scalePlace = autoScaleOption.getSelected() == Values.AUTO_SCALE_PLACE;
-		// The resulting script's name
-		String defaultScript = "";
-		// Set a default for each position.
+		String output = "";
+		// Which side of the switch/scale is ours
+		boolean switchLeft = gameData.charAt(0) == 'L'; // Check if our side of our switch is left
+		boolean scaleLeft = gameData.charAt(1) == 'L'; // Check is our side of the scale is left
+	
+		
 		switch(position) {
-    	case 1:
-    		defaultScript = "1D"; break;
-    	case 2:
-    		defaultScript = "2L"; break; // If in the middle need to avoid power cube zone
-    	case 3:
-    		defaultScript = "3D"; break;
-    	}
-		String output = defaultScript;
+		case 1:
+			if(trySwitch == true && switchLeft == true) {
+				output = "1A";
+			}else if(scaleLeft == true) {
+				if(scalePlace == true) {
+					output = "1B";
+				}
+				if(scalePlace == false) {
+			 		output = "1B-Drive";
+			 	}
+			}else {
+				
+				if(driveCross == true) {
+					output = "1C";
+				}
+				if(driveCross == false) {
+					output = "1D";
+				}
+			}
+			break;
+		case 2:
+			if(switchLeft == true) {
+				output = "2L";			
+			}
+			if(switchLeft == false) {
+				output = "2R";
+			}
+			break;
+		case 3:
+			if(trySwitch == true && switchLeft == false) {
+				output = "3A";
+			}else if(scaleLeft == false) {
+				if(scalePlace == true) {
+					output = "3B";
+				}
+				if(scalePlace == false) {
+			 		output = "3B-Drive";
+			 	}
+			}else {
+				
+				if(driveCross == true) {
+					output = "3C";
+				}
+				if(driveCross == false) {
+					output = "3D";
+				}
+			}
+			break;
+		}
+		return output;
+	}
+	
+	@Override
+	public void autonomousInit() {
+		autoLifterUp = true;
+		int position = autoPositionOption.getSelected();
+		driveBase.setBrake(true);
+		// The resulting script's name
+		String script = "";
 		
 		String gameData = getFieldData();
 		
@@ -204,75 +255,30 @@ public class Robot extends IterativeRobot {
 		// GameData is in format [OURSWITCH][SCALE][OPPONENTSWITCH]
 		// Example: "LRL" means that the left of both switches is ours and the right scale is ours
         if(gameData.length() > 0) {
-		
-			// Which side of the switch/scale is ours
-			boolean switchLeft = gameData.charAt(0) == 'L'; // Check if our side of our switch is left
-			boolean scaleLeft = gameData.charAt(1) == 'L'; // Check is our side of the scale is left
-		
-			
-			switch(position) {
-			case 1:
-				if(trySwitch == true && switchLeft == true) {
-					output = "1A";
-				}else if(scaleLeft == true) {
-					if(scalePlace == true) {
-						output = "1B";
-					}
-					if(scalePlace == false) {
-				 		output = "1B-Drive";
-				 	}
-				}else {
-					
-					if(driveCross == true) {
-						output = "1C";
-					}
-					if(driveCross == false) {
-						output = "1D";
-					}
-				}
-				break;
-			case 2:
-				if(switchLeft == true) {
-					output = "2L";			
-				}
-				if(switchLeft == false) {
-					output = "2R";
-				}
-				break;
-			case 3:
-				if(trySwitch == true && switchLeft == false) {
-					output = "3A";
-				}else if(scaleLeft == false) {
-					if(scalePlace == true) {
-						output = "3B";
-					}
-					if(scalePlace == false) {
-				 		output = "3B-Drive";
-				 	}
-				}else {
-					
-					if(driveCross == true) {
-						output = "3C";
-					}
-					if(driveCross == false) {
-						output = "3D";
-					}
-				}
-				break;
-			}
+			script = getAutoScript(gameData);
         }	
 		
         // Setup auto and load the script.
 		a = new Autonomous();
-		boolean success = a.loadScript(output);
+		boolean success = false;
+		if(!script.trim().equals(""))
+			success = a.loadScript(script);
 		if(!success) {
-			// If the script failed to load try using the default script for the position
-			success = a.loadScript(defaultScript);
-			if(!success) {
-				// If the default fails to load just drive (2/3 chance cross baseline 1/3 change run into power cube zone)
-				a.putScript(new ArrayList<String>(Arrays.asList(new String[] {"DRIVE"})), 
-						new ArrayList<Double>(Arrays.asList(new Double[] {196.0})));
+			switch(position) {
+			case 1:
+			case 3:
+				a.putScript(new String[] {"DRIVE"}, new Double[] {133.0});
+				break;
+			case 2:
+				a.putScript(new String[] {"DRIVE", "ROTATE", "DRIVE", "ROTATE", "DRIVE", "DRIVE"}, 
+						new Double[] {30.0, 90.0, 15.0, 0.0, 44.0, -4.0});
+				break;
 			}
+		}
+		
+		double time = SmartDashboard.getNumber(Values.AUTO_DELAY, 0);
+		if(time > 0) {
+			a.addDelay(time);
 		}
 		
 		Timer.delay(SmartDashboard.getNumber(Values.AUTO_DELAY, 0));
@@ -280,10 +286,15 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 1820 && autoLifterUp) {
+			autoLifterUp = false;
+			lifter.lift(0);
+		}
+		if(autoLifterUp) {
+			lifter.lift(0.85);
+		}
 		a.feedAuto();
-	}
-
-	
+	}	
 	
 	@Override
 	public void teleopInit() {
@@ -338,7 +349,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-				
+			
+		// CLIMBER!!!
+		
+		if(OI.js0.getPOV() == 0) {
+			climber.set(1.0);
+		}else {
+			climber.set(0);
+		}
+		
 		// LIFTER!!!
 		
 		if(OI.autoDownButton.isPressed()) {

@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.usfirst.frc.team2655.robot.AutoCommands.AutoCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.DelayCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.DriveCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.LowerLifterCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.OutputCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.RaiseLifterCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.RotateCommand;
 import org.usfirst.frc.team2655.robot.values.Values;
 
@@ -56,14 +60,19 @@ public class Autonomous {
 		
 	}
 	
+	public void addDelay(Double time) {
+		commands.add(0, "DELAY");
+		args.add(0, time);
+	}
+	
 	/**
 	 * Manually set commands and arguments for auto
 	 * @param commands The commands
 	 * @param args The arguments
 	 */
-	public void putScript(ArrayList<String> commands, ArrayList<Double> args) {
-		this.commands = commands;
-		this.args = args;
+	public void putScript(String[] commands, Double[] args) {
+		this.commands = new ArrayList<String>(Arrays.asList(commands));
+		this.args = new ArrayList<Double>(Arrays.asList(args));
 	}
 	
 	/**
@@ -79,6 +88,12 @@ public class Autonomous {
 			return new RotateCommand();
 		case "DELAY":
 			return new DelayCommand();
+		case "OUTPUT":
+			return new OutputCommand();
+		case "RAISE_LIFTER":
+			return new RaiseLifterCommand();
+		case "LOWER_LIFTER":
+			return new LowerLifterCommand();
 		default:
 			return null;
 		}
