@@ -286,7 +286,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 1820 && autoLifterUp) {
+		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 2020 && autoLifterUp) {
 			autoLifterUp = false;
 			lifter.lift(0);
 		}
@@ -370,7 +370,7 @@ public class Robot extends IterativeRobot {
 			autoLifterDown = false;
 		}
 		
-		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 1820) {
+		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 2020) {
 			autoLifterUp = false;
 		}
 		
@@ -380,8 +380,8 @@ public class Robot extends IterativeRobot {
 		}
 		
 		double lifterSpeed = 0;
-		double upSpeed = OI.lifterUpAxis.getValueLinear();
-		double downSpeed = OI.lifterDownAxis.getValueLinear();
+		double upSpeed = OI.lifterUpAxis.getValue();
+		double downSpeed = OI.lifterDownAxis.getValue();
 		if(upSpeed > 0 && downSpeed <= 0) {
 			lifterSpeed = 0.85 * upSpeed;
 			autoLifterUp = false;
@@ -396,7 +396,7 @@ public class Robot extends IterativeRobot {
 			lifterSpeed = -0.4;
 		}
 		if(autoLifterUp) {
-			lifterSpeed = 0.85;
+			lifterSpeed = 0.95;
 		}
 		
 		lifter.lift(lifterSpeed);
@@ -423,8 +423,8 @@ public class Robot extends IterativeRobot {
 		double rotation = -0.5 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
 		
 		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 5000) {
-			power = OI.driveAxis.getValueLinear() * 0.3;
-			rotation = OI.rotateAxis.getValueLinear() * -0.3;
+			power *= 0.3;
+			rotation *= -0.3;
 		}
 		
 		if(OI.resetButton.isPressed()) {

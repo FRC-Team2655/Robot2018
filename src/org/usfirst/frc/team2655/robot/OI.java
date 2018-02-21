@@ -40,17 +40,23 @@ public class OI {
 		driveAxis = new FancyAxis(js0, controller, controller.getDriveAxis(), controller.flipAxis(),
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER, 
-				RobotProperties.MID_MOVE_POWER, 1);
+				RobotProperties.MID_MOVE_POWER);
 		rotateAxis = new FancyAxis(js0, controller, controller.getRotateAxis(), controller.flipAxis(),
 				controller.getDeadband(), 
 				RobotProperties.MIN_MOVE_POWER,
-				RobotProperties.MID_MOVE_POWER, 0.5);
+				RobotProperties.MID_MOVE_POWER);
 		rightTankAxis = new FancyAxis(js0, controller, controller.getRightTankAxis(), controller.flipAxis(),
 				controller.getDeadband(),
 				RobotProperties.MIN_MOVE_POWER,
-				RobotProperties.MID_MOVE_POWER, 1);
-		lifterUpAxis = new FancyAxis(js0, controller, controller.getUpAxis(), controller.flipAxis());
-		lifterDownAxis = new FancyAxis(js0, controller, controller.getDownAxis(), controller.flipAxis());
+				RobotProperties.MID_MOVE_POWER);
+		lifterUpAxis = new FancyAxis(js0, controller, controller.getUpAxis(), controller.flipAxis(), 
+				0,
+				0,
+				0.5);
+		lifterDownAxis = new FancyAxis(js0, controller, controller.getDownAxis(), controller.flipAxis(),
+				0,
+				0,
+				0.5);
 		intakeReleaseButton = new Button(js0, controller.getIntakeReleaseButton());
 		intakeInButton = new Button(js0, controller.getIntakeInButton());
 		intakeOutButton = new Button(js0, controller.getIntakeOutButton());
