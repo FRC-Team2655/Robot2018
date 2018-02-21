@@ -133,6 +133,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Select Controller:", controllerSelect);
 		SmartDashboard.putString(Values.CURRENT_AUTO, "");
 		SmartDashboard.putBoolean(Values.VELOCITY_LOOP, false);
+		SmartDashboard.putBoolean(Values.INTAKE_OVERRIDE, false);
 		
 		// Auto Options
 		autoPositionOption.addDefault("1 - Left", 1);
@@ -422,11 +423,13 @@ public class Robot extends IterativeRobot {
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
-		double rotation = -0.5 * (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
+		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
 		
 		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 5000) {
 			power *= 0.3;
 			rotation *= -0.3;
+		}else {
+			rotation *= -0.5;
 		}
 		
 		if(OI.resetButton.isPressed()) {

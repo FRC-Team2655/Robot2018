@@ -15,6 +15,7 @@ public class Values {
 	public static final String RIGHT_ENC = "Right Encoder";
 	public static final String VELOCITY_LOOP = "Velocity Closed Loop Mode";
 	public static final String CURRENT_AUTO = "Current Auto Command";
+	public static final String INTAKE_OVERRIDE = "Override Intake Limit Switch";
 	
 	public static final String AUTO_POSITION_CHOOSER = "Auto Starting Position";
 	public static final String AUTO_SCALE_CHOOSER = "Auto Scale";
