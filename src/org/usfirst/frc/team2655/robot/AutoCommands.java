@@ -177,17 +177,13 @@ public final class AutoCommands {
 
 		@Override
 		public void complete() {
-			Robot.lifter.lift(0);
 			super.complete();
 		}
 
 		@Override
 		public void feedCommand() {
-			if(!Robot.lifter.isTopPressed()) {
-				Robot.lifter.lift(0.85);
-			}else {
-				complete();
-			}
+			Robot.newLifter.setLifter(true);
+			complete();
 			super.feedCommand();
 		}
 		
@@ -205,17 +201,13 @@ public final class AutoCommands {
 
 		@Override
 		public void complete() {
-			Robot.lifter.lift(0);
 			super.complete();
 		}
 
 		@Override
 		public void feedCommand() {
-			if(!Robot.lifter.isBottomPressed()) {
-				Robot.lifter.lift(-0.4);
-			}else {
-				complete();
-			}
+			Robot.newLifter.setLifter(false);
+			complete();
 			super.feedCommand();
 		}
 		

@@ -3,7 +3,7 @@ package org.usfirst.frc.team2655.robot;
 import org.usfirst.frc.team2655.robot.controllers.IController;
 import org.usfirst.frc.team2655.robot.subsystem.DriveBaseSubsystem;
 import org.usfirst.frc.team2655.robot.subsystem.IntakeSubsystem;
-import org.usfirst.frc.team2655.robot.subsystem.LifterSubsystem;
+import org.usfirst.frc.team2655.robot.subsystem.NewLifter;
 import org.usfirst.frc.team2655.robot.values.Values;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,26 +30,29 @@ public class Robot extends IterativeRobot {
 	// Our motor controllers. These will be initialized (created) in robotInit
 	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
 	public static WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
+	public static WPI_TalonSRX leftSlave2 = new WPI_TalonSRX(3);
     public static WPI_TalonSRX rightMotor = new WPI_TalonSRX(5);
 	public static WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
+	public static WPI_TalonSRX rightSlave2 = new WPI_TalonSRX(6);
 	
-	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, rightMotor, rightSlave1};
+	public static WPI_TalonSRX[] motors = new WPI_TalonSRX[] {leftMotor, leftSlave1, leftSlave2, rightMotor, rightSlave1, rightSlave2};
 		
-	public static WPI_TalonSRX lifterMotor = new WPI_TalonSRX(6);
-	public static WPI_TalonSRX lifterSlave1 = new WPI_TalonSRX(7);
+	//public static WPI_TalonSRX lifterMotor = new WPI_TalonSRX(6);
+	//public static WPI_TalonSRX lifterSlave1 = new WPI_TalonSRX(7);
 	
 	public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, 1);
+	public static DoubleSolenoid lifterSolenoid = new DoubleSolenoid(2, 3);
 	
-	public static VictorSP climber = new VictorSP(2);
+	//public static VictorSP climber = new VictorSP(2);
 	
-	public static VictorSP intakeLeft = new VictorSP(0), intakeRight = new VictorSP(1);
+	public static WPI_TalonSRX intakeLeft = new WPI_TalonSRX(7), intakeRight = new WPI_TalonSRX(8);
 	public static SpeedControllerGroup intakeMotors = new SpeedControllerGroup(intakeLeft, intakeRight);
 	
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 	
 	// Lifter
-	public static DigitalInput lifterTopSwitch = new DigitalInput(8);
-	public static DigitalInput lifterBottomSwitch = new DigitalInput(9);
+	//public static DigitalInput lifterTopSwitch = new DigitalInput(8);
+	//public static DigitalInput lifterBottomSwitch = new DigitalInput(9);
 	public static DigitalInput intakeSwitch = new DigitalInput(7);
 	
 	// The Gyro
@@ -59,7 +61,8 @@ public class Robot extends IterativeRobot {
 	// Robot Subsystems
 	public static DriveBaseSubsystem driveBase = new DriveBaseSubsystem();
 	public static IntakeSubsystem intake = new IntakeSubsystem();
-	public static LifterSubsystem lifter = new LifterSubsystem();
+	public static NewLifter newLifter = new NewLifter();
+	//public static LifterSubsystem lifter = new LifterSubsystem();
 	
 	// Controller Selector
 	public static SendableChooser<IController> controllerSelect = new SendableChooser<IController>();
@@ -72,9 +75,6 @@ public class Robot extends IterativeRobot {
 	public static Autonomous a;
 	
 	public static Compressor compressor = new Compressor(0);
-	
-	private static boolean autoLifterUp = false;
-	private static boolean autoLifterDown = false;
 	
 	/**
 	 * Setup the motor controllers and the drive object
@@ -96,18 +96,22 @@ public class Robot extends IterativeRobot {
 		rightSlave1.follow(rightMotor);
 		
 		// Make (+) up
-		lifterMotor.setInverted(true);
-		lifterSlave1.setInverted(true);
+		//lifterMotor.setInverted(true);
+		//lifterSlave1.setInverted(true);
 		
-		lifterSlave1.follow(lifterMotor);
+		//lifterSlave1.follow(lifterMotor);
 				
 		// Do not allow LiveWindow to control the talons. It breaks follow mode
 		LiveWindow.remove(leftMotor);
 		LiveWindow.remove(rightMotor);
 		LiveWindow.remove(leftSlave1);
 		LiveWindow.remove(rightSlave1);
-		LiveWindow.remove(lifterMotor);
-		LiveWindow.remove(lifterSlave1);
+		LiveWindow.remove(leftSlave2);
+		LiveWindow.remove(rightSlave2);
+		LiveWindow.remove(intakeLeft);
+		LiveWindow.remove(intakeRight);
+		//LiveWindow.remove(lifterMotor);
+		//LiveWindow.remove(lifterSlave1);
 		
 		// Setup the motor controllers
 		for(WPI_TalonSRX m : motors) {
@@ -121,8 +125,8 @@ public class Robot extends IterativeRobot {
 		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		leftMotor.setSensorPhase(true);
 		
-		lifterMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
-		lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		//lifterMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		//lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		
 		/*leftMotor.config_kP(RobotProperties.TALON_PID_ID, 0.2, RobotProperties.TALON_TIMEOUT);
 		leftMotor.config_kI(RobotProperties.TALON_PID_ID, 0, RobotProperties.TALON_TIMEOUT);
@@ -249,7 +253,6 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void autonomousInit() {
-		autoLifterUp = true;
 		int position = autoPositionOption.getSelected();
 		driveBase.setBrake(true);
 		// The resulting script's name
@@ -292,13 +295,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 2020 && autoLifterUp) {
-			autoLifterUp = false;
-			lifter.lift(0);
-		}
-		if(autoLifterUp) {
-			lifter.lift(0.85);
-		}
+		newLifter.setLifter(true);		
 		a.feedAuto();
 	}	
 	
@@ -344,9 +341,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber(Values.RIGHT_ENC, rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putNumber("RightVelocity", rightMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
-		SmartDashboard.putBoolean("LifterTop", lifter.isTopPressed());
-		SmartDashboard.putBoolean("LifterBottom", lifter.isBottomPressed());
-		SmartDashboard.putNumber("LifterEncoder", lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
+		//SmartDashboard.putBoolean("LifterTop", lifter.isTopPressed());
+		//SmartDashboard.putBoolean("LifterBottom", lifter.isBottomPressed());
+		//SmartDashboard.putNumber("LifterEncoder", lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		SmartDashboard.putBoolean("IntakeSwitch", intake.isSwitchPressed());
 	}
 	
@@ -356,58 +353,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 			
-		// CLIMBER!!!
+		// LIFTER!!
 		
-		if(OI.js0.getPOV() == 0) {
-			climber.set(1.0);
-		}else {
-			climber.set(0);
+		if(OI.autoDownButton.isPressed() && !OI.autoUpButton.isPressed()) {
+			newLifter.setLifter(false);
+		}else if(OI.autoUpButton.isPressed() && !OI.autoDownButton.isPressed()) {
+			newLifter.setLifter(true);
 		}
-		
-		// LIFTER!!!
-		
-		if(OI.autoDownButton.isPressed()) {
-			autoLifterDown = true;
-			autoLifterUp = false;
-		}
-		
-		if(OI.autoUpButton.isPressed()) {
-			autoLifterUp = true;
-			autoLifterDown = false;
-		}
-		
-		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 2020) {
-			autoLifterUp = false;
-		}
-		
-		if(lifter.isBottomPressed()) {
-			autoLifterDown = false;
-			lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
-		}
-		
-		double lifterSpeed = 0;
-		double upSpeed = OI.lifterUpAxis.getValue();
-		double downSpeed = OI.lifterDownAxis.getValue();
-		if(upSpeed > 0 && downSpeed <= 0) {
-			lifterSpeed = 0.85 * upSpeed;
-			autoLifterUp = false;
-			autoLifterDown = false;
-		}else if(downSpeed > 0 && upSpeed <= 0) {
-			lifterSpeed = -0.4 * downSpeed;
-			autoLifterUp = false;
-			autoLifterDown = false;
-		}
-		
-		if(autoLifterDown) {
-			lifterSpeed = -0.4;
-		}
-		if(autoLifterUp) {
-			double percentageLift = 1.3 - lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) / 2020.0;
-			percentageLift = Math.min(Math.max(.5, percentageLift), 1.0);
-			lifterSpeed = 0.85 * percentageLift;
-		}
-		
-		lifter.lift(lifterSpeed);
 		
 		// INTAKE!!!
 		
@@ -429,13 +381,6 @@ public class Robot extends IterativeRobot {
 		
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
 		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
-		
-		if(lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID) > 5000) {
-			power *= 0.3;
-			rotation *= -0.3;
-		}else {
-			rotation *= -0.5;
-		}
 		
 		if(OI.resetButton.isPressed()) {
 			resetSensors();
