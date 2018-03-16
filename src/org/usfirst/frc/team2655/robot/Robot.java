@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,7 +46,7 @@ public class Robot extends IterativeRobot {
 	
 	//public static VictorSP climber = new VictorSP(2);
 	
-	public static WPI_TalonSRX intakeLeft = new WPI_TalonSRX(7), intakeRight = new WPI_TalonSRX(8);
+	public static VictorSP intakeLeft = new VictorSP(0), intakeRight = new VictorSP(1);
 	public static SpeedControllerGroup intakeMotors = new SpeedControllerGroup(intakeLeft, intakeRight);
 	
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
@@ -94,7 +95,7 @@ public class Robot extends IterativeRobot {
 		leftSlave1.follow(leftMotor);
 		
 		rightSlave1.follow(rightMotor);
-		
+				
 		// Make (+) up
 		//lifterMotor.setInverted(true);
 		//lifterSlave1.setInverted(true);
@@ -380,7 +381,7 @@ public class Robot extends IterativeRobot {
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
-		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
+		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear()) * -0.5;
 		
 		if(OI.resetButton.isPressed()) {
 			resetSensors();
