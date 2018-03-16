@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,8 +45,7 @@ public class Robot extends IterativeRobot {
 	
 	//public static VictorSP climber = new VictorSP(2);
 	
-	public static VictorSP intakeLeft = new VictorSP(0), intakeRight = new VictorSP(1);
-	public static SpeedControllerGroup intakeMotors = new SpeedControllerGroup(intakeLeft, intakeRight);
+	public static WPI_TalonSRX intakeLeft = new WPI_TalonSRX(7), intakeRight = new WPI_TalonSRX(8);
 	
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 	
@@ -87,7 +85,9 @@ public class Robot extends IterativeRobot {
 		camera.setResolution(640, 480);
 		
 		// Allow the driver to select a controller
-		OI.selectController(OI.controllers.get(0));
+		OI.selectController(OI.controllers.
+				
+				get(0));
 		
 		// Setup IMU and Motors
 		imu = new ADIS16448_IMU();
@@ -95,6 +95,12 @@ public class Robot extends IterativeRobot {
 		leftSlave1.follow(leftMotor);
 		
 		rightSlave1.follow(rightMotor);
+		
+		leftSlave2.follow(leftMotor);
+		
+		rightSlave2.follow(rightMotor);
+		
+		intakeRight.follow(intakeLeft);
 				
 		// Make (+) up
 		//lifterMotor.setInverted(true);

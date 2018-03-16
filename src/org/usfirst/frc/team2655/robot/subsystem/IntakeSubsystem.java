@@ -17,9 +17,9 @@ public class IntakeSubsystem {
 	public void moveIntake(double speed) {
 		boolean cond = !isSwitchPressed() || SmartDashboard.getBoolean(Values.INTAKE_OVERRIDE, false);
 		if((cond && speed > 0) || speed < 0) {
-			Robot.intakeMotors.set(speed);
+			Robot.intakeLeft.set(speed);
 		}else {
-			Robot.intakeMotors.set(0);
+			Robot.intakeLeft.set(0);
 		}
 	}
 	
