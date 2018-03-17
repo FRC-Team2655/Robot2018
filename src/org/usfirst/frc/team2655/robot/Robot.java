@@ -82,7 +82,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		
 		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-		camera.setResolution(640, 480);
+		camera.setResolution(320, 240);
 		
 		// Allow the driver to select a controller
 		OI.selectController(OI.controllers.
@@ -211,15 +211,15 @@ public class Robot extends IterativeRobot {
 				output = "1A";
 			}else if(scaleLeft == true) {
 				if(scalePlace == true) {
-					output = "1B";
+					output = "1D";
 				}
 				if(scalePlace == false) {
-			 		output = "1B-Drive";
+			 		output = "1D";
 			 	}
 			}else {
 				
 				if(driveCross == true) {
-					output = "1C";
+					output = "1D";
 				}
 				if(driveCross == false) {
 					output = "1D";
@@ -239,15 +239,15 @@ public class Robot extends IterativeRobot {
 				output = "3A";
 			}else if(scaleLeft == false) {
 				if(scalePlace == true) {
-					output = "3B";
+					output = "3D";
 				}
 				if(scalePlace == false) {
-			 		output = "3B-Drive";
+			 		output = "3D";
 			 	}
 			}else {
 				
 				if(driveCross == true) {
-					output = "3C";
+					output = "3D";
 				}
 				if(driveCross == false) {
 					output = "3D";
@@ -343,7 +343,7 @@ public class Robot extends IterativeRobot {
 		}
 		// Update dashboard values as needed
 		if(imu != null)
-			SmartDashboard.putNumber(Values.GYRO, imu.getAngleX());
+			SmartDashboard.putNumber(Values.GYRO, imu.getAngleZ());
 		SmartDashboard.putNumber(Values.LEFT_ENC, leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		SmartDashboard.putNumber(Values.RIGHT_ENC, rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
@@ -387,7 +387,7 @@ public class Robot extends IterativeRobot {
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
 		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
-		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear()) * -0.5;
+		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear()) * -0.45;
 		
 		if(OI.resetButton.isPressed()) {
 			resetSensors();

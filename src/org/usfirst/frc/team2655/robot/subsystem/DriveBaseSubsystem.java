@@ -24,7 +24,7 @@ public class DriveBaseSubsystem extends Subsystem {
     	@Override
     	public double pidGet() {
     		if(Robot.imu != null)
-    			return Robot.imu.getAngleX();
+    			return Robot.imu.getAngleZ();
     		return 0;
     	}
 
@@ -50,14 +50,14 @@ public class DriveBaseSubsystem extends Subsystem {
     			rotateErrorBuffer.clear();
     			drive(0, 0);
     		}else {
-    			drive(0, output);
+    			drive(0, -output);
     		}
     	}
     };
     private final PIDOutput angleCorrectOutput = new PIDOutput() {
 		@Override
 		public void pidWrite(double output) {
-			rotateCorrectOut = output;
+			rotateCorrectOut = -output;
 			// Use the below code when tuning the angleCorrection PID
 			//drive(0, rotateCorrectOut);
 		}
@@ -107,13 +107,13 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void rotatePID(double degree) {
-    	rotatePIDController.setSetpoint(-degree);
+    	rotatePIDController.setSetpoint(degree);
     	rotatePIDController.enable();
     }
     
     public void setAngleCorrection(boolean enabled) {
     	if(enabled && Robot.imu != null) {
-    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleX());
+    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleZ());
     		angleCorrectionPIDController.enable();
     	}else {
     		rotateCorrectOut = 0;
