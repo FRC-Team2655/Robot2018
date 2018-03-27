@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -26,6 +27,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot {
+	
+	public static final boolean newIntake = true;
 	
 	// Our motor controllers. These will be initialized (created) in robotInit
 	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
@@ -83,6 +86,7 @@ public class Robot extends IterativeRobot {
 		
 		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 		camera.setResolution(320, 240);
+		camera.setFPS(30);
 		
 		// Allow the driver to select a controller
 		OI.selectController(OI.controllers.
@@ -194,6 +198,11 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public String getAutoScript(String gameData) {
+		
+		if(gameData.equalsIgnoreCase("Test")) {
+			return "TEST";
+		}
+		
 		// Get data from the dashboard
 		int position = autoPositionOption.getSelected();
 		boolean trySwitch = SmartDashboard.getBoolean(Values.AUTO_TRY_SWITCH, true);
@@ -260,6 +269,10 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void autonomousInit() {
+		
+		compressor.setClosedLoopControl(false);
+		compressor.setClosedLoopControl(true);
+		
 		int position = autoPositionOption.getSelected();
 		driveBase.setBrake(true);
 		// The resulting script's name
@@ -343,7 +356,7 @@ public class Robot extends IterativeRobot {
 		}
 		// Update dashboard values as needed
 		if(imu != null)
-			SmartDashboard.putNumber(Values.GYRO, imu.getAngleZ());
+			SmartDashboard.putNumber(Values.GYRO, imu.getAngleX());
 		SmartDashboard.putNumber(Values.LEFT_ENC, leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		SmartDashboard.putNumber(Values.RIGHT_ENC, rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
@@ -375,7 +388,7 @@ public class Robot extends IterativeRobot {
 			intakeSpeed = 0.75;
 		}
 		if(OI.intakeOutButton.isPressed() && !OI.intakeInButton.isPressed()) {
-			intakeSpeed = -0.75;
+			intakeSpeed = newIntake ? -0.6 : -0.75;
 		}
 		
 		intake.setLock(!OI.intakeReleaseButton.isPressed());

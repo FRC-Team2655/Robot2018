@@ -14,17 +14,18 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DriveBaseSubsystem extends Subsystem {
 	
 	// The rotate PID
-	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(20);
+	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(30);
 	private final PIDSource rotateSource = new PIDSource() {
     	@Override
     	public double pidGet() {
     		if(Robot.imu != null)
-    			return Robot.imu.getAngleZ();
+    			return Robot.imu.getAngleX();
     		return 0;
     	}
 
@@ -44,20 +45,21 @@ public class DriveBaseSubsystem extends Subsystem {
     		if(output != 0 && Math.abs(output) < min) {
     			output = Math.copySign(min, output);
     		}
+    		SmartDashboard.putNumber("RotatePIDOut", Robot.imu.getAngleX());
     		rotateErrorBuffer.put(rotatePIDController.getError());
     		if(Math.abs(rotateErrorBuffer.average()) < 2 && rotatePIDController.isEnabled()) {
     			rotatePIDController.disable();
     			rotateErrorBuffer.clear();
     			drive(0, 0);
     		}else {
-    			drive(0, -output);
+    			drive(0, output);
     		}
     	}
     };
     private final PIDOutput angleCorrectOutput = new PIDOutput() {
 		@Override
 		public void pidWrite(double output) {
-			rotateCorrectOut = -output;
+			rotateCorrectOut = output;
 			// Use the below code when tuning the angleCorrection PID
 			//drive(0, rotateCorrectOut);
 		}
@@ -82,7 +84,7 @@ public class DriveBaseSubsystem extends Subsystem {
     	rotatePIDController.setName("Rotate PID");
     	
     	// Set max allowed power for the PID
-    	rotatePIDController.setOutputRange(-0.3, 0.3);
+    	rotatePIDController.setOutputRange(-0.5, 0.5);
     	
     	angleCorrectionPIDController.setContinuous(false);
     	angleCorrectionPIDController.setName("Angle Correction PID");
@@ -107,13 +109,13 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void rotatePID(double degree) {
-    	rotatePIDController.setSetpoint(degree);
+    	rotatePIDController.setSetpoint(-degree);
     	rotatePIDController.enable();
     }
     
     public void setAngleCorrection(boolean enabled) {
     	if(enabled && Robot.imu != null) {
-    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleZ());
+    		angleCorrectionPIDController.setSetpoint(Robot.imu.getAngleX());
     		angleCorrectionPIDController.enable();
     	}else {
     		rotateCorrectOut = 0;

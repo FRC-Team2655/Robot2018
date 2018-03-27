@@ -60,7 +60,7 @@ public final class AutoCommands {
 	// Drive with angle correction until a distance
 	public static class DriveCommand extends AutoCommand{		
 		public DriveCommand() {
-			super(0);
+			super(5000);
 		}
 
 		private double targetDistance;
@@ -90,10 +90,15 @@ public final class AutoCommands {
 		public void feedCommand() {
 			double ticks = Robot.driveBase.getAvgTicks();
 			distanceLeft = targetDistance - ticks;
-			double speed = 0.5;
-			if(Math.abs(distanceLeft) < 8192) { 
-				speed = 0.3; // Slow down to reduce overshoot
-			}
+			
+			// [distance from start or end] / threshold + minSpeed
+			double rampup = Math.abs(targetDistance - distanceLeft) / 8192.0 + 0.3;
+			double rampdown = Math.abs(distanceLeft) / 24576.0 + 0.0;
+			
+			double speed = Math.copySign(Math.min(1.0, Math.min(rampup, rampdown)) , distanceLeft);
+
+			System.out.println(speed);
+			
 			if(Math.abs(ticks) < Math.abs(targetDistance)) {
 				Robot.driveBase.drive(Math.copySign(speed, targetDistance), Robot.driveBase.rotateCorrectOut);
 			}else {
