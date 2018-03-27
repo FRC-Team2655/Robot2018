@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveBaseSubsystem extends Subsystem {
 	
 	// The rotate PID
-	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(30);
+	private final PIDErrorBuffer rotateErrorBuffer = new PIDErrorBuffer(20);
 	private final PIDSource rotateSource = new PIDSource() {
     	@Override
     	public double pidGet() {
@@ -41,7 +41,7 @@ public class DriveBaseSubsystem extends Subsystem {
     private final PIDOutput rotateOutput = new PIDOutput() {
     	@Override
     	public void pidWrite(double output) {
-    		double min = 0.15;
+    		double min = 0.1;
     		if(output != 0 && Math.abs(output) < min) {
     			output = Math.copySign(min, output);
     		}
