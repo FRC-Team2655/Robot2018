@@ -120,7 +120,7 @@ public final class AutoCommands {
 	// Rotate to an absolute position
 	public static class RotateCommand extends AutoCommand{		
 		public RotateCommand() {
-			super(0);
+			super(5000);
 		}
 		@Override
 		public void initCommand(Double arg1, Double arg2) {
