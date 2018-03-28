@@ -60,9 +60,10 @@ public final class AutoCommands {
 	// Drive with angle correction until a distance
 	public static class DriveCommand extends AutoCommand{		
 		public DriveCommand() {
-			super(5000);
+			super(0);
 		}
-
+		private double lastPos = 0;
+		private int stopCounter = 0;
 		private double targetDistance;
 		private double distanceLeft;
 		@Override
@@ -91,15 +92,22 @@ public final class AutoCommands {
 			double ticks = Robot.driveBase.getAvgTicks();
 			distanceLeft = targetDistance - ticks;
 			
+			// If we have moved less than 10 ticks between iterations assume we are stopped
+			if(lastPos != 0 && Math.abs(ticks - lastPos) < 10) {
+				stopCounter++;
+			}else {
+				stopCounter = 0;
+			}
+			lastPos = ticks;
+			
 			// [distance from start or end] / threshold + minSpeed
 			double rampup = Math.abs(targetDistance - distanceLeft) / 8192.0 + 0.3;
-			double rampdown = Math.abs(distanceLeft) / 24576.0 + 0.0;
+			double rampdown = Math.abs(distanceLeft) / 24576.0 + 0.1;
 			
 			double speed = Math.copySign(Math.min(1.0, Math.min(rampup, rampdown)) , distanceLeft);
-
-			System.out.println(speed);
 			
-			if(Math.abs(ticks) < Math.abs(targetDistance)) {
+			// Past target or average within 1-4 rotation for 10 iterations
+			if(Math.abs(ticks) < Math.abs(targetDistance) && stopCounter < 10) {
 				Robot.driveBase.drive(Math.copySign(speed, targetDistance), Robot.driveBase.rotateCorrectOut);
 			}else {
 				complete();
@@ -160,7 +168,7 @@ public final class AutoCommands {
 	public static class OutputCommand extends DelayCommand{
 		@Override
 		public void feedCommand() {
-			Robot.intake.moveIntake(-0.75);
+			Robot.intake.moveIntake(Robot.newIntake ? -0.6 : -0.75);
 			super.feedCommand();
 		}
 		@Override

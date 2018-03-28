@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -19,7 +18,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -296,11 +294,11 @@ public class Robot extends IterativeRobot {
 			switch(position) {
 			case 1:
 			case 3:
-				a.putScript(new String[] {"DRIVE"}, new Double[] {133.0});
+				a.putScript(new String[] {"DRIVE"}, new Double[] {142.0});
 				break;
 			case 2:
-				a.putScript(new String[] {"DRIVE", "ROTATE", "DRIVE", "ROTATE", "DRIVE", "DRIVE"}, 
-						new Double[] {30.0, 90.0, 15.0, 0.0, 44.0, -4.0});
+				a.putScript(new String[] {"ROTATE", "DRIVE"}, 
+						new Double[] {25.0, 102.0});
 				break;
 			}
 		}
