@@ -9,6 +9,10 @@ import java.util.Arrays;
 import org.usfirst.frc.team2655.robot.AutoCommands.AutoCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.DelayCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.DriveCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.IntakeCloseCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.IntakeOffCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.IntakeOnCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.IntakeOpenCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.LowerLifterCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.OutputCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.RaiseLifterCommand;
@@ -94,6 +98,14 @@ public class Autonomous {
 			return new RaiseLifterCommand();
 		case "LOWER_LIFTER":
 			return new LowerLifterCommand();
+		case "INTAKE_ON":
+			return new IntakeOnCommand();
+		case "INTAKE_OFF":
+			return new IntakeOffCommand();
+		case "INTAKE_OPEN":
+			return new IntakeOpenCommand();
+		case "INTAKE_CLOSE":
+			return new IntakeCloseCommand();
 		default:
 			return null;
 		}

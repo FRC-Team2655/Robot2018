@@ -270,6 +270,7 @@ public class Robot extends IterativeRobot {
 		
 		compressor.setClosedLoopControl(false);
 		compressor.setClosedLoopControl(true);
+		newLifter.setLifter(true);
 		
 		int position = autoPositionOption.getSelected();
 		driveBase.setBrake(true);
@@ -312,8 +313,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	@Override
-	public void autonomousPeriodic() {
-		newLifter.setLifter(true);		
+	public void autonomousPeriodic() {		
 		a.feedAuto();
 	}	
 	

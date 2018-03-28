@@ -223,8 +223,112 @@ public final class AutoCommands {
 			complete();
 			super.feedCommand();
 		}
-		
-		
-		
+	}
+	
+	static Thread intakeControl = null;
+	public static class IntakeOnCommand extends AutoCommand{
+
+		public IntakeOnCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Double arg1, Double arg2) {
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			intakeControl = new Thread() {
+				@Override
+				public void run() {
+					while(true) {
+						Robot.intake.moveIntake(1.0);
+						try {Thread.sleep(30);}catch(Exception e) {}
+					}
+				}
+			};
+			intakeControl.start();
+			complete();
+			super.feedCommand();
+		}
+	}
+	public static class IntakeOffCommand extends AutoCommand{
+
+		public IntakeOffCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Double arg1, Double arg2) {
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			Robot.intake.moveIntake(0);
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			if(intakeControl != null)
+				intakeControl.stop();
+			complete();
+			super.feedCommand();
+		}
+	}
+	public static class IntakeOpenCommand extends AutoCommand{
+
+		public IntakeOpenCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Double arg1, Double arg2) {
+			Robot.intake.setLock(false);
+			System.out.println("Open");
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			complete();
+			super.feedCommand();
+		}
+	}
+	public static class IntakeCloseCommand extends AutoCommand{
+
+		public IntakeCloseCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Double arg1, Double arg2) {
+			Robot.intake.setLock(true);
+			System.out.println("Close");
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			complete();
+			super.feedCommand();
+		}
 	}
 }
