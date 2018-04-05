@@ -161,8 +161,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean(Values.ROTATE_CUBIC, false);
 		SmartDashboard.putData("Select Controller:", controllerSelect);
 		SmartDashboard.putString(Values.CURRENT_AUTO, "");
-		SmartDashboard.putBoolean(Values.VELOCITY_LOOP, false);
 		SmartDashboard.putBoolean(Values.INTAKE_OVERRIDE, false);
+		SmartDashboard.putBoolean(Values.DEAD_ENCODER, false);
 		
 		// Auto Options
 		autoPositionOption.addObject("1 - Left", 1);
@@ -246,10 +246,16 @@ public class Robot extends IterativeRobot {
 			break;
 		case 2:
 			if(switchLeft == true) {
-				output = "2L";			
+				if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
+					output = "2L";
+				else
+					output = "2L-Path";
 			}
 			if(switchLeft == false) {
-				output = "2R";
+				if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
+					output = "2R";
+				else
+					output = "2R-Path";
 			}
 			break;
 		case 3:

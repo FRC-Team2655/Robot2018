@@ -3,6 +3,7 @@ package org.usfirst.frc.team2655.robot.subsystem;
 import org.usfirst.frc.team2655.robot.PIDErrorBuffer;
 import org.usfirst.frc.team2655.robot.Robot;
 import org.usfirst.frc.team2655.robot.RobotProperties;
+import org.usfirst.frc.team2655.robot.values.Values;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -103,14 +104,19 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void driveTank(double left, double right) {
-    	if(left != 0)
-    		Robot.leftMotor.set(ControlMode.Velocity, left * 3900);
-    	else
-    		Robot.leftMotor.set(0);
-    	if(right != 0)
-    		Robot.rightMotor.set(ControlMode.Velocity, right * 3900);
-    	else
-    		Robot.rightMotor.set(0);
+    	if(!SmartDashboard.getBoolean(Values.DEAD_ENCODER, false)) {
+	    	if(left != 0)
+	    		Robot.leftMotor.set(ControlMode.Velocity, left * 3900);
+	    	else
+	    		Robot.leftMotor.set(0);
+	    	if(right != 0)
+	    		Robot.rightMotor.set(ControlMode.Velocity, right * 3900);
+	    	else
+	    		Robot.rightMotor.set(0);
+    	}else {
+    		Robot.leftMotor.set(ControlMode.PercentOutput, left);
+    		Robot.rightMotor.set(ControlMode.PercentOutput, right);
+    	}
     }
     
     public void rotatePID(double degree) {
@@ -135,7 +141,9 @@ public class DriveBaseSubsystem extends Subsystem {
     public int getAvgTicks() {
     	int left = Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID); 
     	int right = Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID); 
-    	int avg = (left + right) / 2;
+    	int avg = (left + right);
+    	if(!SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
+    		avg /= 2;
     	return avg;
     	
     }
