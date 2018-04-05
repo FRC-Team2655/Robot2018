@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2655.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.SendableBase;
@@ -7,16 +8,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class TalonPIDDisplay extends SendableBase{
 	private WPI_TalonSRX talon;
+	ControlMode mode;
 	int slot;
 	double p, i, d, f;
 	
-	public TalonPIDDisplay(WPI_TalonSRX talon, double p, double i, double d, double f) {
-		this(talon, p, i, d, f, 0);
+	private double setpoint = 0;
+	private boolean enabled = false;
+	
+	public TalonPIDDisplay(WPI_TalonSRX talon, ControlMode mode, double p, double i, double d, double f) {
+		this(talon, mode, p, i, d, f, 0);
 	}
 	
-	public TalonPIDDisplay(WPI_TalonSRX talon, double p, double i, double d, double f, int slot) {
+	public TalonPIDDisplay(WPI_TalonSRX talon, ControlMode mode, double p, double i, double d, double f, int slot) {
 		super();
 		this.talon = talon;
+		this.mode = mode;
 		this.p = p;
 		this.i = i;
 		this.d = d;
@@ -55,11 +61,25 @@ public class TalonPIDDisplay extends SendableBase{
 		talon.config_kF(slot, f, 0);
 	}
 	
-	public void setSetpoint(double setpoint) {}
-	public double getSetpoint() {return 0.0;}
+	public void setSetpoint(double setpoint) {
+		this.setpoint = setpoint;
+		if(enabled) {
+			talon.set(mode, setpoint);
+		}
+	}
+	public double getSetpoint() {
+		return this.setpoint;
+	}
 	
-	public boolean isEnabled() {return true;}
-	public void setEnabled(boolean enable) {};
+	public boolean isEnabled() {return this.enabled;}
+	public void setEnabled(boolean enable) {
+		this.enabled = enable;
+		if(enable) {
+			talon.set(mode, setpoint);
+		}else {
+			talon.set(ControlMode.PercentOutput, 0);
+		}
+	};
 	
 	public boolean reset() {
 		return true;

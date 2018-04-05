@@ -15,6 +15,7 @@ import org.usfirst.frc.team2655.robot.AutoCommands.IntakeOnCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.IntakeOpenCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.LowerLifterCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.OutputCommand;
+import org.usfirst.frc.team2655.robot.AutoCommands.PathCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.RaiseLifterCommand;
 import org.usfirst.frc.team2655.robot.AutoCommands.RotateCommand;
 import org.usfirst.frc.team2655.robot.values.Values;
@@ -30,7 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Autonomous { 
 	String scriptPath = "/auto-scripts";
 	private ArrayList<String> commands = new ArrayList<>();
- 	private ArrayList<Double> args = new ArrayList<>();		
+ 	private ArrayList<Object> args = new ArrayList<>();		
 	
 	/**
 	 * Load a set of commands and arguments from a CSV file on the roboRIO
@@ -47,7 +48,7 @@ public class Autonomous {
 			while((currentLine = reader.readLine()) != null) {
 				String[] columns = currentLine.split(",");
 				String CMD = columns[0];
-				Double arg = null;
+				Object arg = columns[1];
 				try{arg = Double.parseDouble(columns[1]); } catch(Exception e) {}
 				commands.add(CMD);
 				args.add(arg);
@@ -74,9 +75,9 @@ public class Autonomous {
 	 * @param commands The commands
 	 * @param args The arguments
 	 */
-	public void putScript(String[] commands, Double[] args) {
+	public void putScript(String[] commands, Object[] args) {
 		this.commands = new ArrayList<String>(Arrays.asList(commands));
-		this.args = new ArrayList<Double>(Arrays.asList(args));
+		this.args = new ArrayList<Object>(Arrays.asList(args));
 	}
 	
 	/**
@@ -106,6 +107,8 @@ public class Autonomous {
 			return new IntakeOpenCommand();
 		case "INTAKE_CLOSE":
 			return new IntakeCloseCommand();
+		case "PATH":
+			return new PathCommand();
 		default:
 			return null;
 		}
@@ -113,7 +116,7 @@ public class Autonomous {
 	
 	String commandName = "";
 	int commandIndex = -1;
-	Double arg1 = null, arg2 = null;
+	Object arg1 = null, arg2 = null;
 	AutoCommand command;
 	
 	/**

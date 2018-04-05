@@ -7,6 +7,7 @@ import org.usfirst.frc.team2655.robot.subsystem.NewLifter;
 import org.usfirst.frc.team2655.robot.values.Values;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -26,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 	
-	public static final boolean newIntake = true;
+	public static final boolean newIntake = false;
 	
 	// Our motor controllers. These will be initialized (created) in robotInit
 	public static WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
@@ -122,25 +123,35 @@ public class Robot extends IterativeRobot {
 		//LiveWindow.remove(lifterMotor);
 		//LiveWindow.remove(lifterSlave1);
 		
-		// Setup the motor controllers
-		for(WPI_TalonSRX m : motors) {
-			m.setInverted(true);
-		}
+		
+		leftMotor.setInverted(true);
+		leftSlave1.setInverted(true);
+		leftSlave2.setInverted(true);
 		
 		// Setup encoders. (-) direction is forward (b/c up on JS is negative)
 		leftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		leftMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		rightMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		
 		leftMotor.setSensorPhase(true);
+		rightMotor.setSensorPhase(true);
 		
-		//lifterMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
-		//lifterMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
+		leftMotor.configNominalOutputForward(0, RobotProperties.TALON_TIMEOUT);
+		leftMotor.configNominalOutputReverse(0, RobotProperties.TALON_TIMEOUT);
+		leftMotor.configPeakOutputForward(1, RobotProperties.TALON_TIMEOUT);
+		leftMotor.configPeakOutputReverse(-1, RobotProperties.TALON_TIMEOUT);
 		
-		/*leftMotor.config_kP(RobotProperties.TALON_PID_ID, 0.2, RobotProperties.TALON_TIMEOUT);
-		leftMotor.config_kI(RobotProperties.TALON_PID_ID, 0, RobotProperties.TALON_TIMEOUT);
-		leftMotor.config_kD(RobotProperties.TALON_PID_ID, 0, RobotProperties.TALON_TIMEOUT);
-		leftMotor.config_kF(RobotProperties.TALON_PID_ID, 1.12, RobotProperties.TALON_TIMEOUT);*/
+		rightMotor.configNominalOutputForward(0, RobotProperties.TALON_TIMEOUT);
+		rightMotor.configNominalOutputReverse(0, RobotProperties.TALON_TIMEOUT);
+		rightMotor.configPeakOutputForward(1, RobotProperties.TALON_TIMEOUT);
+		rightMotor.configPeakOutputReverse(-1, RobotProperties.TALON_TIMEOUT);
+		
+		TalonPIDDisplay leftDisplay = new TalonPIDDisplay(leftMotor, ControlMode.Velocity, 0.32, 0, 0, 0.2);
+		SmartDashboard.putData("Left Talon", leftDisplay);
+		
+		TalonPIDDisplay rightDisplay = new TalonPIDDisplay(rightMotor, ControlMode.Velocity, 0.32, 0, 0, 0.2);
+		SmartDashboard.putData("Right Talon", rightDisplay);
 		
 		if(imu != null)
 			imu.reset(); // Make initial direction 0
@@ -154,8 +165,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean(Values.INTAKE_OVERRIDE, false);
 		
 		// Auto Options
-		autoPositionOption.addDefault("1 - Left", 1);
-		autoPositionOption.addObject("2 - Center", 2);
+		autoPositionOption.addObject("1 - Left", 1);
+		autoPositionOption.addDefault("2 - Center", 2);
 		autoPositionOption.addObject("3 - Right", 3);
 		
 		autoScaleOption.addDefault("Place on scale", Values.AUTO_SCALE_PLACE);
@@ -357,8 +368,8 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putNumber(Values.GYRO, imu.getAngleX());
 		SmartDashboard.putNumber(Values.LEFT_ENC, leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 		SmartDashboard.putNumber(Values.RIGHT_ENC, rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
-		//SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
-		//SmartDashboard.putNumber("RightVelocity", rightMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
+		SmartDashboard.putNumber("LeftVelocity", leftMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
+		SmartDashboard.putNumber("RightVelocity", rightMotor.getSelectedSensorVelocity(RobotProperties.TALON_PID_ID));
 		//SmartDashboard.putBoolean("LifterTop", lifter.isTopPressed());
 		//SmartDashboard.putBoolean("LifterBottom", lifter.isBottomPressed());
 		//SmartDashboard.putNumber("LifterEncoder", lifterMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
@@ -383,10 +394,10 @@ public class Robot extends IterativeRobot {
 		
 		double intakeSpeed = 0;
 		if(OI.intakeInButton.isPressed() && !OI.intakeOutButton.isPressed()) {
-			intakeSpeed = 0.75;
+			intakeSpeed = 0.8;
 		}
 		if(OI.intakeOutButton.isPressed() && !OI.intakeInButton.isPressed()) {
-			intakeSpeed = newIntake ? -0.6 : -0.75;
+			intakeSpeed = -0.8;
 		}
 		
 		intake.setLock(!OI.intakeReleaseButton.isPressed());
@@ -405,7 +416,10 @@ public class Robot extends IterativeRobot {
 		}
 				
 		SmartDashboard.putNumber("Speed", rotation);
-		driveBase.drive(power, rotation);
+		//driveBase.drive(1, 0);
+		/*double[] speeds = driveBase.arcadeDrive(power, rotation, false);
+		leftMotor.set(ControlMode.Velocity, 3900 * speeds[0]);
+		rightMotor.set(ControlMode.Velocity, 4145 * speeds[1]);*/
 	}
 
 	@Override

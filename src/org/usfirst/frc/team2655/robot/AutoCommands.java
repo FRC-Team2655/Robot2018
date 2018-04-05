@@ -1,6 +1,9 @@
 package org.usfirst.frc.team2655.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
 
 /**
  * This is a container class for all of the commands used in auto.
@@ -39,7 +42,7 @@ public final class AutoCommands {
 		public boolean isDone() {
 			return isDone;
 		}
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			startTime = System.currentTimeMillis();
 			isStarted = true;
 		}
@@ -67,14 +70,14 @@ public final class AutoCommands {
 		private double targetDistance;
 		private double distanceLeft;
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			if(arg1 == null) {
 				complete();
 				return;
 			}
 			Robot.resetEncoders();
 			Timer.delay(0.1); // Wait for encoders to reset
-			targetDistance = -arg1 / 18.8496 * 4096;
+			targetDistance = -((Double)arg1) / 18.8496 * 4096;
 			distanceLeft = targetDistance;
 			Robot.driveBase.setAngleCorrection(true);
 			super.initCommand(arg1, arg2);
@@ -123,12 +126,12 @@ public final class AutoCommands {
 			super(5000);
 		}
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			if(arg1 == null) {
 				complete();
 				return;
 			}
-			Robot.driveBase.rotatePID(arg1);
+			Robot.driveBase.rotatePID((Double)arg1);
 			super.initCommand(arg1, arg2);
 		}
 		@Override
@@ -153,12 +156,12 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			if(arg1 == null) {
 				complete();
 				return;
 			}
-			setTimeout((long)(arg1 * 1000.0));
+			setTimeout((long)(((Double)arg1) * 1000.0));
 			super.initCommand(arg1, arg2);
 		}
 		
@@ -168,7 +171,7 @@ public final class AutoCommands {
 	public static class OutputCommand extends DelayCommand{
 		@Override
 		public void feedCommand() {
-			Robot.intake.moveIntake(Robot.newIntake ? -0.6 : -0.75);
+			Robot.intake.moveIntake(-0.8);
 			super.feedCommand();
 		}
 		@Override
@@ -184,7 +187,7 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			super.initCommand(arg1, arg2);
 		}
 
@@ -208,7 +211,7 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			super.initCommand(arg1, arg2);
 		}
 
@@ -233,7 +236,7 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			super.initCommand(arg1, arg2);
 		}
 
@@ -265,7 +268,7 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			super.initCommand(arg1, arg2);
 		}
 
@@ -290,7 +293,7 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			Robot.intake.setLock(false);
 			System.out.println("Open");
 			super.initCommand(arg1, arg2);
@@ -314,9 +317,50 @@ public final class AutoCommands {
 		}
 
 		@Override
-		public void initCommand(Double arg1, Double arg2) {
+		public void initCommand(Object arg1, Object arg2) {
 			Robot.intake.setLock(true);
 			System.out.println("Close");
+			super.initCommand(arg1, arg2);
+		}
+
+		@Override
+		public void complete() {
+			super.complete();
+		}
+
+		@Override
+		public void feedCommand() {
+			complete();
+			super.feedCommand();
+		}
+	}
+	
+	public static class PathCommand extends AutoCommand{
+		public PathCommand() {
+			super(0);
+		}
+
+		@Override
+		public void initCommand(Object arg1, Object arg2) {
+			// Data is sent as a set of waypoints in the following format
+			// X1 Y1 A1|X2 Y2 A2|...|Xn Yn An
+			// X=X coord Y=Y coord A=angle
+			String[] sets = ((String)arg1).split("|");
+			Waypoint[] waypoints = new Waypoint[sets.length];
+			for(int i = 0; i < sets.length; i++) {
+				String[] values = sets[i].split(" ");
+				try {
+					waypoints[i] = new Waypoint(Double.parseDouble(values[0]),
+							Double.parseDouble(values[1]),
+							Pathfinder.d2r(Double.parseDouble(values[2])));
+				}catch(Exception e) {
+					// Skip the command if the data is invalid
+					System.err.println("Skipping path command because of invalid data.");
+					complete();
+					return;
+				}
+			}
+			Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
 			super.initCommand(arg1, arg2);
 		}
 
