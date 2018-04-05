@@ -147,10 +147,10 @@ public class Robot extends IterativeRobot {
 		rightMotor.configPeakOutputForward(1, RobotProperties.TALON_TIMEOUT);
 		rightMotor.configPeakOutputReverse(-1, RobotProperties.TALON_TIMEOUT);
 		
-		TalonPIDDisplay leftDisplay = new TalonPIDDisplay(leftMotor, ControlMode.Velocity, 0.32, 0, 0, 0.2);
+		TalonPIDDisplay leftDisplay = new TalonPIDDisplay(leftMotor, ControlMode.Velocity, 0.1, 0, 0, 0.235);
 		SmartDashboard.putData("Left Talon", leftDisplay);
 		
-		TalonPIDDisplay rightDisplay = new TalonPIDDisplay(rightMotor, ControlMode.Velocity, 0.32, 0, 0, 0.2);
+		TalonPIDDisplay rightDisplay = new TalonPIDDisplay(rightMotor, ControlMode.Velocity, 0.1, 0, 0, 0.23);
 		SmartDashboard.putData("Right Talon", rightDisplay);
 		
 		if(imu != null)
@@ -416,10 +416,7 @@ public class Robot extends IterativeRobot {
 		}
 				
 		SmartDashboard.putNumber("Speed", rotation);
-		//driveBase.drive(1, 0);
-		/*double[] speeds = driveBase.arcadeDrive(power, rotation, false);
-		leftMotor.set(ControlMode.Velocity, 3900 * speeds[0]);
-		rightMotor.set(ControlMode.Velocity, 4145 * speeds[1]);*/
+		driveBase.drive(power, rotation);
 	}
 
 	@Override

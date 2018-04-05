@@ -103,8 +103,14 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void driveTank(double left, double right) {
-    	Robot.leftMotor.set(ControlMode.PercentOutput, left);
-    	Robot.rightMotor.set(ControlMode.PercentOutput, right);
+    	if(left != 0)
+    		Robot.leftMotor.set(ControlMode.Velocity, left * 3900);
+    	else
+    		Robot.leftMotor.set(0);
+    	if(right != 0)
+    		Robot.rightMotor.set(ControlMode.Velocity, right * 3900);
+    	else
+    		Robot.rightMotor.set(0);
     }
     
     public void rotatePID(double degree) {
@@ -169,7 +175,7 @@ public class DriveBaseSubsystem extends Subsystem {
         }
       }
       
-      return new double[] {leftMotorOutput, -rightMotorOutput};
+      return new double[] {leftMotorOutput, rightMotorOutput};
     }
     
 }
