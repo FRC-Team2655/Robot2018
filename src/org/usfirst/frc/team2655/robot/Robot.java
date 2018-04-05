@@ -246,16 +246,10 @@ public class Robot extends IterativeRobot {
 			break;
 		case 2:
 			if(switchLeft == true) {
-				if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
-					output = "2L";
-				else
-					output = "2L-Path";
+				output = "2L";
 			}
 			if(switchLeft == false) {
-				if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
-					output = "2R";
-				else
-					output = "2R-Path";
+				output = "2R";
 			}
 			break;
 		case 3:
