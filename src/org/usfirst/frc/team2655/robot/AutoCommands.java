@@ -79,7 +79,7 @@ public final class AutoCommands {
 			Timer.delay(0.1); // Wait for encoders to reset
 			targetDistance = -((Double)arg1) / 18.8496 * 4096;
 			distanceLeft = targetDistance;
-			//Robot.driveBase.setAngleCorrection(true);
+			Robot.driveBase.setAngleCorrection(true);
 			super.initCommand(arg1, arg2);
 		}
 		

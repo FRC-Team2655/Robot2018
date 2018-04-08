@@ -104,7 +104,7 @@ public class DriveBaseSubsystem extends Subsystem {
     }
     
     public void driveTank(double left, double right) {
-    	if(!SmartDashboard.getBoolean(Values.DEAD_ENCODER, false)) {
+    	/*if(!SmartDashboard.getBoolean(Values.DEAD_ENCODER, false)) {
 	    	if(left != 0)
 	    		Robot.leftMotor.set(ControlMode.Velocity, left * 3900);
 	    	else
@@ -113,10 +113,10 @@ public class DriveBaseSubsystem extends Subsystem {
 	    		Robot.rightMotor.set(ControlMode.Velocity, right * 3900);
 	    	else
 	    		Robot.rightMotor.set(0);
-    	}else {
+    	}else {*/
     		Robot.leftMotor.set(ControlMode.PercentOutput, left);
     		Robot.rightMotor.set(ControlMode.PercentOutput, right);
-    	}
+    	//}
     }
     
     public void rotatePID(double degree) {

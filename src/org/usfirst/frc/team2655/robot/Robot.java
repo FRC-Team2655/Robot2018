@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -83,9 +83,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-		camera.setResolution(320, 240);
-		camera.setFPS(30);
+		CameraServer.getInstance().addAxisCamera("Front Camera", "axis-camera");
 		
 		// Allow the driver to select a controller
 		OI.selectController(OI.controllers.
