@@ -1,9 +1,12 @@
 package org.usfirst.frc.team2655.robot;
 
+import java.io.File;
+
 import edu.wpi.first.wpilibj.Timer;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
+import jaci.pathfinder.followers.EncoderFollower;
 
 /**
  * This is a container class for all of the commands used in auto.
@@ -77,7 +80,7 @@ public final class AutoCommands {
 			}
 			Robot.resetEncoders();
 			Timer.delay(0.1); // Wait for encoders to reset
-			targetDistance = -((Double)arg1) / 18.8496 * 4096;
+			targetDistance = ((Double)arg1) / 18.8496 * 4096;
 			distanceLeft = targetDistance;
 			Robot.driveBase.setAngleCorrection(true);
 			super.initCommand(arg1, arg2);
@@ -336,42 +339,79 @@ public final class AutoCommands {
 	}
 	
 	public static class PathCommand extends AutoCommand{
+		private double lastPos = 0;
+		private int stopCounter = 0;
+		private EncoderFollower left, right;
 		public PathCommand() {
 			super(0);
 		}
 
 		@Override
 		public void initCommand(Object arg1, Object arg2) {
-			// Data is sent as a set of waypoints in the following format
-			// X1 Y1 A1|X2 Y2 A2|...|Xn Yn An
-			// X=X coord Y=Y coord A=angle
-			String[] sets = ((String)arg1).split("|");
-			Waypoint[] waypoints = new Waypoint[sets.length];
-			for(int i = 0; i < sets.length; i++) {
-				String[] values = sets[i].split(" ");
-				try {
-					waypoints[i] = new Waypoint(Double.parseDouble(values[0]),
-							Double.parseDouble(values[1]),
-							Pathfinder.d2r(Double.parseDouble(values[2])));
-				}catch(Exception e) {
-					// Skip the command if the data is invalid
-					System.err.println("Skipping path command because of invalid data.");
-					complete();
-					return;
-				}
+			String name = (String)arg1;
+			Trajectory leftTrajectory = null, rightTrajectory = null;
+			File leftFile = new File(Autonomous.pathsPath + name + "_left_detailed.csv");
+			File rightFile = new File(Autonomous.pathsPath + name + "_right_detailed.csv");
+
+			if(leftFile.exists())
+				leftTrajectory = Pathfinder.readFromCSV(leftFile);
+			else
+				System.err.println("Left trajectory file does not exist.");
+			if(rightFile.exists())
+				rightTrajectory = Pathfinder.readFromCSV(rightFile);
+			else
+				System.err.println("Right trajectory file does not exist.");
+			
+			if(leftTrajectory != null) {
+				left = new EncoderFollower(leftTrajectory);
+				left.configureEncoder(Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID), 4096, 0.152);
+				left.configurePIDVA(1.0, 0.0, 0.0, 1 / RobotProperties.MAX_VEL, 0);
 			}
-			Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
+			if(rightTrajectory != null) {
+				right = new EncoderFollower(rightTrajectory);
+				right.configureEncoder(Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID), 4096, 0.152);
+				right.configurePIDVA(1.0, 0.0, 0.0, 1 /RobotProperties.MAX_VEL, 0);
+			}
+			
+			if(left == null || right == null)
+				complete();
 			super.initCommand(arg1, arg2);
 		}
 
 		@Override
 		public void complete() {
+			Robot.driveBase.drive(0, 0);
 			super.complete();
 		}
 
 		@Override
 		public void feedCommand() {
-			complete();
+			if(left == null || right == null)
+				return;
+			double ticks = Robot.driveBase.getAvgTicks();			
+			// If we have moved less than 10 ticks between iterations assume we are stopped
+			if(lastPos != 0 && Math.abs(ticks - lastPos) < 10) {
+				stopCounter++;
+			}else {
+				stopCounter = 0;
+			}
+			lastPos = ticks;
+			
+			double l = left.calculate(Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
+			double r = right.calculate(Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
+			
+			double gyro_heading = Robot.imu.getAngleX();    // Assuming the gyro is giving a value in degrees
+			double desired_heading = Pathfinder.r2d(left.getHeading());  // Should also be in degrees
+
+			double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
+			double turn = 0.8 * (-1.0/80.0) * angleDifference;
+			
+			if(stopCounter >= 10 || (l == 0 && r == 0)) {
+				complete();
+			}else {
+				Robot.driveBase.driveTankVelocity(l + turn, r - turn);
+			}
+			
 			super.feedCommand();
 		}
 	}

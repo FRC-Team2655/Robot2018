@@ -52,14 +52,14 @@ public class DriveBaseSubsystem extends Subsystem {
     			rotateErrorBuffer.clear();
     			drive(0, 0);
     		}else {
-    			drive(0, output);
+    			drive(0, -output);
     		}
     	}
     };
     private final PIDOutput angleCorrectOutput = new PIDOutput() {
 		@Override
 		public void pidWrite(double output) {
-			rotateCorrectOut = output;
+			rotateCorrectOut = -output;
 			// Use the below code when tuning the angleCorrection PID
 			//drive(0, rotateCorrectOut);
 		}
@@ -99,7 +99,7 @@ public class DriveBaseSubsystem extends Subsystem {
      * @param rotation Power to rotate with	
      */
     public void drive(double power, double rotation) {
-    	double[] speeds = arcadeDrive(power, rotation, false);
+    	double[] speeds = arcadeDrive(power, rotation);
     	driveTank(speeds[0], speeds[1]);
     }
     
@@ -148,43 +148,49 @@ public class DriveBaseSubsystem extends Subsystem {
     	
     }
     
-    public double[] arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs) {
-      // Square the inputs (while preserving the sign) to increase fine control
-      // while permitting full power.
-      if (squaredInputs) {
-        xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
-        zRotation = Math.copySign(zRotation * zRotation, zRotation);
-      }
-
-      double leftMotorOutput;
-      double rightMotorOutput;
-
-      double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
-
-      zRotation *= 2;
-      
-      if (xSpeed >= 0.0) {
-        // First quadrant, else second quadrant
-        if (zRotation >= 0.0) {
-          leftMotorOutput = maxInput;
-          rightMotorOutput = xSpeed - zRotation;
-        } else {
-          leftMotorOutput = xSpeed + zRotation;
-          rightMotorOutput = maxInput;
-        }
-      } else {
-        // Third quadrant, else fourth quadrant
-        if (zRotation >= 0.0) {
-          leftMotorOutput = xSpeed + zRotation;
-          rightMotorOutput = maxInput;
-        } else {
-          leftMotorOutput = maxInput;
-          rightMotorOutput = xSpeed - zRotation;
-        }
-      }
-      
-      return new double[] {leftMotorOutput, rightMotorOutput};
+    public void driveTankVelocity(double left, double right) {
+    	if(left != 0)
+    		Robot.leftMotor.set(ControlMode.Velocity, left * RobotProperties.MAX_TICKS_VEL);
+    	else
+    		Robot.leftMotor.set(0);
+    	if(right != 0)
+    		Robot.rightMotor.set(ControlMode.Velocity, right * RobotProperties.MAX_TICKS_VEL);
+    	else
+    		Robot.rightMotor.set(0);
     }
+    
+    public double[] arcadeDrive(double xSpeed, double zRotation) {
+		double leftMotorOutput;
+		double rightMotorOutput;
+		
+		// Prevent -0.0 from breaking the arcade drive
+		// Java uses signed so -0.0 >= 0.0 is false
+		xSpeed += 0.0;
+		zRotation += 0.0;
+		
+		double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
+		
+		if (xSpeed >= 0.0) {
+			// First quadrant, else second quadrant
+			if (zRotation >= 0.0) {
+				leftMotorOutput = maxInput;
+				rightMotorOutput = xSpeed - zRotation;
+			} else {
+				leftMotorOutput = xSpeed + zRotation;
+				rightMotorOutput = maxInput;
+			}
+		} else {
+			// Third quadrant, else fourth quadrant
+			if (zRotation >= 0.0) {
+			    leftMotorOutput = xSpeed + zRotation;
+			    rightMotorOutput = maxInput;
+		  	} else {
+		  		leftMotorOutput = maxInput;
+		    	rightMotorOutput = xSpeed - zRotation;
+		  	}
+		}
+		return new double[] {leftMotorOutput, rightMotorOutput};
+	}
     
 }
 

@@ -122,18 +122,19 @@ public class Robot extends IterativeRobot {
 		//LiveWindow.remove(lifterSlave1);
 		
 		
-		leftMotor.setInverted(true);
-		leftSlave1.setInverted(true);
-		leftSlave2.setInverted(true);
+		rightMotor.setInverted(true);
+		rightSlave1.setInverted(true);
+		rightSlave2.setInverted(true);
+		
+		leftMotor.setSensorPhase(true);
+		rightMotor.setSensorPhase(true);
+		
 		
 		// Setup encoders. (-) direction is forward (b/c up on JS is negative)
 		leftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		leftMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		rightMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
 		rightMotor.setSelectedSensorPosition(0, RobotProperties.TALON_PID_ID, RobotProperties.TALON_TIMEOUT);
-		
-		leftMotor.setSensorPhase(true);
-		rightMotor.setSensorPhase(true);
 		
 		leftMotor.configNominalOutputForward(0, RobotProperties.TALON_TIMEOUT);
 		leftMotor.configNominalOutputReverse(0, RobotProperties.TALON_TIMEOUT);
@@ -277,6 +278,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		
+		imu.reset();
+		
 		compressor.setClosedLoopControl(false);
 		compressor.setClosedLoopControl(true);
 		newLifter.setLifter(true);
@@ -356,6 +359,11 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotPeriodic() {
+		
+		if(OI.resetButton.isPressed()) {
+			resetSensors();
+		}
+		
 		// Update controller choice
 		IController selected = controllerSelect.getSelected();
 		if(selected != OI.selectedController) {
@@ -406,12 +414,8 @@ public class Robot extends IterativeRobot {
 		boolean driveCubic = SmartDashboard.getBoolean(Values.DRIVE_CUBIC, true);
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
-		double power =  driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear();
-		double rotation =(rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear()) * -0.45;
-		
-		if(OI.resetButton.isPressed()) {
-			resetSensors();
-		}
+		double power =  (driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear()) * -1;
+		double rotation = (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear()) * 0.45;
 				
 		SmartDashboard.putNumber("Speed", rotation);
 		driveBase.drive(power, rotation);

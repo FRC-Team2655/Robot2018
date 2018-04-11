@@ -29,7 +29,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class Autonomous { 
-	String scriptPath = "/auto-scripts";
+	public static final String scriptPath = "/auto-scripts";
+	public static final String pathsPath = scriptPath + "/paths/";
 	private ArrayList<String> commands = new ArrayList<>();
  	private ArrayList<Object> args = new ArrayList<>();		
 	
