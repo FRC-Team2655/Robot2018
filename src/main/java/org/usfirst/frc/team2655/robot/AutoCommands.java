@@ -406,7 +406,7 @@ public final class AutoCommands {
 			double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
 			double turn = 0.8 * (-1.0/80.0) * angleDifference;
 			
-			if(stopCounter >= 10 || (l == 0 && r == 0)) {
+			if(stopCounter >= 10 || (l == 0 && r == 0 && Math.abs(angleDifference) <= 1)) {
 				complete();
 			}else {
 				Robot.driveBase.driveTankVelocity(l + turn, r - turn);

@@ -86,9 +86,7 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().addAxisCamera("Front Camera", "axis-camera");
 		
 		// Allow the driver to select a controller
-		OI.selectController(OI.controllers.
-				
-				get(0));
+		OI.selectController(OI.controllers.get(0));
 		
 		// Setup IMU and Motors
 		imu = new ADIS16448_IMU();
