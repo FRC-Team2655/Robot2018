@@ -494,9 +494,10 @@ public class Robot extends IterativeRobot {
 		}else{
 			rotation *= 0.45;
 		}
-				
-		SmartDashboard.putNumber("Speed", rotation);
-		driveBase.drive(power, rotation);
+
+		// Use velocity closed loop if both encoders work and velocity closed loop is enabled on SmartDashboard
+		driveBase.drive(power, rotation, true);
+
 	}
 
 	@Override

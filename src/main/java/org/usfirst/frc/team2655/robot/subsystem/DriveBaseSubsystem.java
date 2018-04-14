@@ -92,15 +92,19 @@ public class DriveBaseSubsystem extends Subsystem {
     	addChild(rotatePIDController);
     	addChild(angleCorrectionPIDController);
     }
-    
+
+    public void drive(double power, double rotation){
+    	drive(power, rotation, false);
+	}
+
     /**
      * Drive the robot
      * @param power Speed to drive
      * @param rotation Power to rotate with	
      */
-    public void drive(double power, double rotation) {
+    public void drive(double power, double rotation, boolean useVelocityIfAllowed) {
 		double[] speeds = arcadeDrive(power, rotation);
-		if (SmartDashboard.getBoolean(Values.VELOCITY_DRIVE, false)) {
+		if (SmartDashboard.getBoolean(Values.VELOCITY_DRIVE, false) && !SmartDashboard.getBoolean(Values.DEAD_ENCODER, false)) {
 			driveTankVelocity(speeds[0], speeds[1]);
 		} else {
 			driveTank(speeds[0], speeds[1]);
