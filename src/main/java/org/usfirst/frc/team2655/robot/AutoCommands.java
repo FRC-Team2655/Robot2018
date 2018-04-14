@@ -380,7 +380,7 @@ public final class AutoCommands {
 			    System.err.println("Right: " + rightTrajectory);
             }
 
-			if(isReversed){
+			if(isReversed && leftTrajectory != null && rightTrajectory != null){
 				Trajectory tmpTraj = leftTrajectory;
 				leftTrajectory = rightTrajectory;
 				rightTrajectory = tmpTraj;
