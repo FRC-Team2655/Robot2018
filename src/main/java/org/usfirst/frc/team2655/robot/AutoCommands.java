@@ -231,7 +231,7 @@ public final class AutoCommands {
 		}
 	}
 	
-	static Thread intakeControl = null;
+	public static Thread intakeControl = null;
 	public static class IntakeOnCommand extends AutoCommand{
 
 		public IntakeOnCommand() {
@@ -339,8 +339,6 @@ public final class AutoCommands {
 	}
 	
 	public static class PathCommand extends AutoCommand{
-		private double lastPos = 0;
-		private int stopCounter = 0;
 		private boolean isReversed = false;
 		private EncoderFollower left, right;
 		public PathCommand() {
@@ -350,7 +348,7 @@ public final class AutoCommands {
 		@Override
 		public void initCommand(Object arg1, Object arg2) {
 			String name = (String)arg1;
-
+			System.out.println("Run Path: " + name);
 			try{
 				if(Integer.parseInt((String)arg2) == -1){
 					isReversed = true;
@@ -369,6 +367,14 @@ public final class AutoCommands {
 				rightTrajectory = Pathfinder.readFromCSV(rightFile);
 			else
 				System.err.println("Right trajectory file does not exist.");
+
+			if(leftTrajectory != null && rightTrajectory != null){
+			    System.out.println("Path loaded successfully");
+            }else{
+			    System.err.println("Path failed to load.");
+			    System.err.println("Left: " + leftTrajectory);
+			    System.err.println("Right: " + rightTrajectory);
+            }
 
 			if(isReversed){
 				Trajectory tmpTraj = leftTrajectory;
@@ -405,6 +411,14 @@ public final class AutoCommands {
 				right.configurePIDVA(1.0, 0.0, 0.0, 1 /RobotProperties.MAX_VEL, 0);
 			}
 
+			if(left != null && right != null){
+				System.out.println("Encoder followers created successfully.");
+			}else{
+				System.err.println("Failed to create encoder followers.");
+				System.err.println("Left: " + left);
+				System.err.println("Right: " + right);
+			}
+
 			if(left == null || right == null)
 				complete();
 			super.initCommand(arg1, arg2);
@@ -420,18 +434,10 @@ public final class AutoCommands {
 		public void feedCommand() {
 			if(left == null || right == null)
 				return;
-			double ticks = Robot.driveBase.getAvgTicks();			
-			// If we have moved less than 10 ticks between iterations assume we are stopped
-			if(lastPos != 0 && Math.abs(ticks - lastPos) < 10) {
-				stopCounter++;
-			}else {
-				stopCounter = 0;
-			}
-			lastPos = ticks;
-			
+
 			double l = left.calculate(Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 			double r = right.calculate(Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
-			
+
 			double gyro_heading = Robot.imu.getAngleX();    // Assuming the gyro is giving a value in degrees
 			double desired_heading = Pathfinder.r2d(left.getHeading());  // Should also be in degrees
 
@@ -441,7 +447,7 @@ public final class AutoCommands {
 			l += turn;
 			r -= turn;
 
-			if(stopCounter >= 10 || (l == 0 && r == 0 && Math.abs(angleDifference) <= 1)) {
+			if(left.isFinished() && right.isFinished()) {
 				complete();
 			}else {
 				Robot.driveBase.driveTankVelocity(l , r);

@@ -184,6 +184,8 @@ public class Robot extends IterativeRobot {
 		// Make sure auto is dead and not trying to control anything
 		if(a != null)
 			a.killAuto();
+		if(AutoCommands.intakeControl != null)
+			AutoCommands.intakeControl.stop();
 	}
 	
 	/**
