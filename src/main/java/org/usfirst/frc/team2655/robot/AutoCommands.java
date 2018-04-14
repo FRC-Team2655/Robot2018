@@ -340,6 +340,8 @@ public final class AutoCommands {
 	
 	public static class PathCommand extends AutoCommand{
 		private boolean isReversed = false;
+		private int stopCounter = 0;
+		private double lastPos = 0;
 		private EncoderFollower left, right;
 		public PathCommand() {
 			super(0);
@@ -354,6 +356,8 @@ public final class AutoCommands {
 					isReversed = true;
 				}
 			}catch(Exception e){}
+
+			lastPos = Robot.driveBase.getAvgTicks();
 
 			Trajectory leftTrajectory = null, rightTrajectory = null;
 			File leftFile = new File(Autonomous.pathsPath + name + "_left_detailed.csv");
@@ -435,6 +439,16 @@ public final class AutoCommands {
 			if(left == null || right == null)
 				return;
 
+			double ticks = Robot.driveBase.getAvgTicks();
+
+			// If we have moved less than 10 ticks between iterations assume we are stopped
+			if(lastPos != 0 && Math.abs(ticks - lastPos) < 10) {
+				stopCounter++;
+			}else {
+				stopCounter = 0;
+			}
+			lastPos = ticks;
+
 			double l = left.calculate(Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 			double r = right.calculate(Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID));
 
@@ -447,7 +461,7 @@ public final class AutoCommands {
 			l += turn;
 			r -= turn;
 
-			if(left.isFinished() && right.isFinished()) {
+			if(stopCounter >= 20 || (left.isFinished() && right.isFinished())) {
 				complete();
 			}else {
 				Robot.driveBase.driveTankVelocity(l , r);
