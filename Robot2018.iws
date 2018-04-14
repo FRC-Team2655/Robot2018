@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79b77c6c-a8d1-4322-a3fd-82d29c1c3745" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Robot2018.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/Robot2018.ipr" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Robot2018.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Robot2018.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Autonomous.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Autonomous.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Robot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/subsystem/DriveBaseSubsystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/subsystem/DriveBaseSubsystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/values/Values.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/values/Values.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -94,10 +87,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Robot.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Robot.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Robot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
+            <state relative-caret-position="849">
               <caret line="490" column="29" selection-start-line="490" selection-start-column="29" selection-end-line="490" selection-end-column="29" />
               <folding>
                 <element signature="method#getAutoScript#0;class#Robot#0" />
@@ -125,11 +118,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AutoCommands.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AutoCommands.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="649">
-              <caret line="399" column="29" selection-start-line="399" selection-start-column="29" selection-end-line="399" selection-end-column="29" />
+            <state relative-caret-position="289">
+              <caret line="383" column="55" lean-forward="true" selection-start-line="383" selection-start-column="55" selection-end-line="383" selection-end-column="55" />
             </state>
           </provider>
         </entry>
@@ -148,10 +141,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Autonomous.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/values/Values.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/subsystem/DriveBaseSubsystem.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Robot.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java" />
       </list>
     </option>
   </component>
@@ -394,13 +387,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="649">
-          <caret line="399" column="29" selection-start-line="399" selection-start-column="29" selection-end-line="399" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/values/Values.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -422,12 +408,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/Robot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
+        <state relative-caret-position="849">
           <caret line="490" column="29" selection-start-line="490" selection-start-column="29" selection-end-line="490" selection-end-column="29" />
           <folding>
             <element signature="method#getAutoScript#0;class#Robot#0" />
             <element signature="method#getPathfinderScript#0;class#Robot#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/usfirst/frc/team2655/robot/AutoCommands.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="383" column="55" lean-forward="true" selection-start-line="383" selection-start-column="55" selection-end-line="383" selection-end-column="55" />
         </state>
       </provider>
     </entry>

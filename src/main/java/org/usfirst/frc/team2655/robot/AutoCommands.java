@@ -341,6 +341,7 @@ public final class AutoCommands {
 	public static class PathCommand extends AutoCommand{
 		private double lastPos = 0;
 		private int stopCounter = 0;
+		private boolean isReversed = false;
 		private EncoderFollower left, right;
 		public PathCommand() {
 			super(0);
@@ -349,6 +350,13 @@ public final class AutoCommands {
 		@Override
 		public void initCommand(Object arg1, Object arg2) {
 			String name = (String)arg1;
+
+			try{
+				if(Integer.parseInt((String)arg2) == -1){
+					isReversed = true;
+				}
+			}catch(Exception e){}
+
 			Trajectory leftTrajectory = null, rightTrajectory = null;
 			File leftFile = new File(Autonomous.pathsPath + name + "_left_detailed.csv");
 			File rightFile = new File(Autonomous.pathsPath + name + "_right_detailed.csv");
@@ -361,6 +369,30 @@ public final class AutoCommands {
 				rightTrajectory = Pathfinder.readFromCSV(rightFile);
 			else
 				System.err.println("Right trajectory file does not exist.");
+
+			if(isReversed){
+				Trajectory tmpTraj = leftTrajectory;
+				leftTrajectory = rightTrajectory;
+				rightTrajectory = tmpTraj;
+				for(int i = 0; i < leftTrajectory.segments.length; i++){
+					leftTrajectory.segments[i].acceleration *= -1;
+					leftTrajectory.segments[i].dt *= -1;
+					leftTrajectory.segments[i].jerk *= -1;
+					leftTrajectory.segments[i].position *= -1;
+					leftTrajectory.segments[i].velocity *= -1;
+					leftTrajectory.segments[i].x *= -1;
+					leftTrajectory.segments[i].y *= -1;
+				}
+				for(int i = 0; i < rightTrajectory.segments.length; i++){
+					rightTrajectory.segments[i].acceleration *= -1;
+					rightTrajectory.segments[i].dt *= -1;
+					rightTrajectory.segments[i].jerk *= -1;
+					rightTrajectory.segments[i].position *= -1;
+					rightTrajectory.segments[i].velocity *= -1;
+					rightTrajectory.segments[i].x *= -1;
+					rightTrajectory.segments[i].y *= -1;
+				}
+			}
 
 			if(leftTrajectory != null) {
 				left = new EncoderFollower(leftTrajectory);
