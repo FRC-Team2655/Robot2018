@@ -32,7 +32,8 @@ public class Autonomous {
 	public static final String scriptPath = "/auto-scripts";
 	public static final String pathsPath = scriptPath + "/paths/";
 	private ArrayList<String> commands = new ArrayList<>();
- 	private ArrayList<Object> args = new ArrayList<>();		
+ 	private ArrayList<Object> args = new ArrayList<>();
+ 	private ArrayList<Object> secondArgs = new ArrayList<>();
 	
 	/**
 	 * Load a set of commands and arguments from a CSV file on the roboRIO
@@ -49,10 +50,15 @@ public class Autonomous {
 			while((currentLine = reader.readLine()) != null) {
 				String[] columns = currentLine.split(",");
 				String CMD = columns[0];
-				Object arg = columns[1];
+				Object arg = null, arg2 = null;
+				if(columns.length >= 2)
+					arg = columns[1];
+				if(columns.length >= 3)
+					arg2 = columns[2];
 				try{arg = Double.parseDouble(columns[1]); } catch(Exception e) {}
 				commands.add(CMD);
 				args.add(arg);
+				secondArgs.add(arg2);
 			}
 			
 			reader.close();
@@ -82,7 +88,7 @@ public class Autonomous {
 	}
 	
 	/**
-	 * Get a AutoCommand Object ({@link AutoCommands.java}) for the given command
+	 * Get a AutoCommand Object ({@link AutoCommands}) for the given command
 	 * @param commandName The command
 	 * @return An object or null
 	 */
@@ -135,6 +141,7 @@ public class Autonomous {
 			if(commandIndex < commands.size()) {
 				commandName = commands.get(commandIndex);
 				arg1 = args.get(commandIndex);
+				arg2 = secondArgs.get(commandIndex);
 			}else {
 				commandName = "DONE";
 				arg1 = null;

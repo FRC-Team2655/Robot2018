@@ -99,9 +99,13 @@ public class DriveBaseSubsystem extends Subsystem {
      * @param rotation Power to rotate with	
      */
     public void drive(double power, double rotation) {
-    	double[] speeds = arcadeDrive(power, rotation);
-    	driveTank(speeds[0], speeds[1]);
-    }
+		double[] speeds = arcadeDrive(power, rotation);
+		if (SmartDashboard.getBoolean(Values.VELOCITY_DRIVE, false)) {
+			driveTankVelocity(speeds[0], speeds[1]);
+		} else {
+			driveTank(speeds[0], speeds[1]);
+		}
+	}
     
     public void driveTank(double left, double right) {
     	/*if(!SmartDashboard.getBoolean(Values.DEAD_ENCODER, false)) {

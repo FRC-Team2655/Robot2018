@@ -175,7 +175,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber(Values.AUTO_DELAY, 0);
 		SmartDashboard.putBoolean(Values.AUTO_TRY_SWITCH, true);
 		SmartDashboard.putData(Values.AUTO_SCALE_CHOOSER, autoScaleOption);
-		SmartDashboard.putData(Values.AUTO_CROSS_CHOOSER, autoCrossOption);	
+		SmartDashboard.putData(Values.AUTO_CROSS_CHOOSER, autoCrossOption);
+		SmartDashboard.putBoolean(Values.VELOCITY_DRIVE, false);
 	}
 	
 	@Override 
@@ -203,7 +204,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public String getAutoScript(String gameData) {
-		
+
 		if(gameData.equalsIgnoreCase("Test")) {
 			return "TEST";
 		}
@@ -271,7 +272,76 @@ public class Robot extends IterativeRobot {
 		}
 		return output;
 	}
-	
+
+	public String getPathfinderScript(String gameData){
+		if(gameData.equalsIgnoreCase("Test")) {
+			return "TEST";
+		}
+
+		// Get data from the dashboard
+		int position = autoPositionOption.getSelected();
+		boolean trySwitch = SmartDashboard.getBoolean(Values.AUTO_TRY_SWITCH, true);
+		boolean driveCross = autoCrossOption.getSelected() == Values.AUTO_CROSS_CROSS;
+		boolean scalePlace = autoScaleOption.getSelected() == Values.AUTO_SCALE_PLACE;
+		String output = "";
+		// Which side of the switch/scale is ours
+		boolean switchLeft = gameData.charAt(0) == 'L'; // Check if our side of our switch is left
+		boolean scaleLeft = gameData.charAt(1) == 'L'; // Check is our side of the scale is left
+
+
+		switch(position) {
+			case 1:
+				if(trySwitch == true && switchLeft == true) {
+					output = "1A-Path";
+				}else if(scaleLeft == true) {
+					if(scalePlace == true) {
+						output = "1D";
+					}
+					if(scalePlace == false) {
+						output = "1D";
+					}
+				}else {
+
+					if(driveCross == true) {
+						output = "1D";
+					}
+					if(driveCross == false) {
+						output = "1D";
+					}
+				}
+				break;
+			case 2:
+				if(switchLeft == true) {
+					output = "2L-Path";
+				}
+				if(switchLeft == false) {
+					output = "2R-Path";
+				}
+				break;
+			case 3:
+				if(trySwitch == true && switchLeft == false) {
+					output = "3A-Path";
+				}else if(scaleLeft == false) {
+					if(scalePlace == true) {
+						output = "3D";
+					}
+					if(scalePlace == false) {
+						output = "3D";
+					}
+				}else {
+
+					if(driveCross == true) {
+						output = "3D";
+					}
+					if(driveCross == false) {
+						output = "3D";
+					}
+				}
+				break;
+		}
+		return output;
+	}
+
 	@Override
 	public void autonomousInit() {
 		
@@ -292,7 +362,10 @@ public class Robot extends IterativeRobot {
 		// GameData is in format [OURSWITCH][SCALE][OPPONENTSWITCH]
 		// Example: "LRL" means that the left of both switches is ours and the right scale is ours
         if(gameData.length() > 0) {
-			script = getAutoScript(gameData);
+        	if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
+        		script = getAutoScript(gameData);
+        	else
+        		script = getPathfinderScript(gameData);
         }	
 		
         // Setup auto and load the script.
@@ -412,7 +485,13 @@ public class Robot extends IterativeRobot {
 		boolean rotateCubic = SmartDashboard.getBoolean(Values.ROTATE_CUBIC, true);
 		
 		double power =  (driveCubic ? OI.driveAxis.getValue() : OI.driveAxis.getValueLinear()) * -1;
-		double rotation = (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear()) * 0.45;
+		double rotation = (rotateCubic ? OI.rotateAxis.getValue() : OI.rotateAxis.getValueLinear());
+
+		if(SmartDashboard.getBoolean(Values.VELOCITY_DRIVE, false)){
+			rotation *= 0.55;
+		}else{
+			rotation *= 0.45;
+		}
 				
 		SmartDashboard.putNumber("Speed", rotation);
 		driveBase.drive(power, rotation);

@@ -361,7 +361,7 @@ public final class AutoCommands {
 				rightTrajectory = Pathfinder.readFromCSV(rightFile);
 			else
 				System.err.println("Right trajectory file does not exist.");
-			
+
 			if(leftTrajectory != null) {
 				left = new EncoderFollower(leftTrajectory);
 				left.configureEncoder(Robot.leftMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID), 4096, 0.152);
@@ -372,7 +372,7 @@ public final class AutoCommands {
 				right.configureEncoder(Robot.rightMotor.getSelectedSensorPosition(RobotProperties.TALON_PID_ID), 4096, 0.152);
 				right.configurePIDVA(1.0, 0.0, 0.0, 1 /RobotProperties.MAX_VEL, 0);
 			}
-			
+
 			if(left == null || right == null)
 				complete();
 			super.initCommand(arg1, arg2);
@@ -405,11 +405,14 @@ public final class AutoCommands {
 
 			double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
 			double turn = 0.8 * (-1.0/80.0) * angleDifference;
-			
+
+			l += turn;
+			r -= turn;
+
 			if(stopCounter >= 10 || (l == 0 && r == 0 && Math.abs(angleDifference) <= 1)) {
 				complete();
 			}else {
-				Robot.driveBase.driveTankVelocity(l + turn, r - turn);
+				Robot.driveBase.driveTankVelocity(l , r);
 			}
 			
 			super.feedCommand();
