@@ -39,7 +39,7 @@ public class PS4Controller extends IController {
 
 	@Override
 	public int getIntakeReleaseButton() {
-		return 1;
+		return 8;
 	}
 
 	@Override

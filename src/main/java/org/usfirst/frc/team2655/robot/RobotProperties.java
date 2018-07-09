@@ -8,8 +8,8 @@ public class RobotProperties {
 	public static final int LEFT_IN_CHN = 10;
 	public static final int RIGHT_IN_CHN = 11;
 	
-	public final static int MAX_TICKS_VEL = 3900;  // ticks per 100ms
-	public final static double MAX_VEL = 4.5585; // meters per second = MAX_TICKS_VEL * 10 / 4096 * pi * wheel_diameter(m)
+	public final static int MAX_TICKS_VEL = 4160;  // ticks per 100ms
+	public final static double MAX_VEL = 4.85; // meters per second = MAX_TICKS_VEL * 10 / 4096 * pi * wheel_diameter(m)
 	
 	// Talon SRX config
 
