@@ -392,8 +392,6 @@ public class Robot extends IterativeRobot {
 		if(time > 0) {
 			a.addDelay(time);
 		}
-		
-		Timer.delay(SmartDashboard.getNumber(Values.AUTO_DELAY, 0));
 	}
 
 	@Override
