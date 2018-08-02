@@ -364,10 +364,13 @@ public class Robot extends IterativeRobot {
 		// GameData is in format [OURSWITCH][SCALE][OPPONENTSWITCH]
 		// Example: "LRL" means that the left of both switches is ours and the right scale is ours
         if(gameData.length() > 0) {
-        	if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
+        	/*if(SmartDashboard.getBoolean(Values.DEAD_ENCODER, false))
         		script = getAutoScript(gameData);
         	else
-        		script = getPathfinderScript(gameData);
+        		script = getPathfinderScript(gameData);*/
+
+        	// On the secondary bot DO NOT USE PATHS!!! It can not move fast enough so they will always be short!
+			script = getAutoScript(gameData);
         }	
 		
         // Setup auto and load the script.

@@ -48,3 +48,13 @@ jar {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4'
 }
+
+build {
+	project.logger.lifecycle('')
+	project.logger.lifecycle('')
+	project.logger.lifecycle('********************************************************************************************')
+	project.logger.lifecycle('     WARNING: BUILDING ON THE SECONDARY ROBOT BRANCH!!!! DO NOT DEPLOY TO MAIN ROBOT!!!')
+	project.logger.lifecycle('********************************************************************************************')
+	project.logger.lifecycle('')
+	project.logger.lifecycle('')
+}
