@@ -143,10 +143,10 @@ public class Robot extends IterativeRobot {
 		rightMotor.configPeakOutputForward(1, RobotProperties.TALON_TIMEOUT);
 		rightMotor.configPeakOutputReverse(-1, RobotProperties.TALON_TIMEOUT);
 		
-		TalonPIDDisplay leftDisplay = new TalonPIDDisplay(leftMotor, ControlMode.Velocity, 0.1, 0, 0, 0.235);
+		TalonPIDDisplay leftDisplay = new TalonPIDDisplay(leftMotor, ControlMode.Velocity, 0.1, 0, 0, 0.335);
 		SmartDashboard.putData("Left Talon", leftDisplay);
 		
-		TalonPIDDisplay rightDisplay = new TalonPIDDisplay(rightMotor, ControlMode.Velocity, 0.1, 0, 0, 0.23);
+		TalonPIDDisplay rightDisplay = new TalonPIDDisplay(rightMotor, ControlMode.Velocity, 0.1, 0, 0, 0.33);
 		SmartDashboard.putData("Right Talon", rightDisplay);
 		
 		if(imu != null)
