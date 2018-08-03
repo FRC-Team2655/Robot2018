@@ -62,7 +62,7 @@ public class OI {
 		resetButton = new Button(js0, controller.getResetButton());
 		autoDownButton = new Button(js0, controller.getLifterDownButton());
 		autoUpButton = new Button(js0, controller.getLifterUpButton());
-		victorySpinButton = new Button(js0, controller.getVictorySpinButtonA());
+		victorySpinButton = new Button(js0, controller.getVictorySpinButton());
 	}
 	
 	// The axis and buttons
