@@ -77,4 +77,9 @@ public class PS4Controller extends IController {
 		return 2;
 	}
 
+	@Override
+	public int getVictorySpinButton() {
+		return 14;
+	}
+
 }

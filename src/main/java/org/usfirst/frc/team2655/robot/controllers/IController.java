@@ -27,5 +27,7 @@ public abstract class IController {
 	public abstract int getIntakeReleaseButton();
 	public abstract int getLifterDownButton();
 	public abstract int getLifterUpButton();
-	
+
+	public abstract int getVictorySpinButton();
+
 }
