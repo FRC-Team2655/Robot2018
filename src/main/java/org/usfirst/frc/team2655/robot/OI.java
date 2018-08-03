@@ -29,7 +29,6 @@ public class OI {
 	/**
 	 * 	Select a controller and configure the class for the controller;
 	 * @param controller The controller to use
-	 * @param js The joystick to associate the controller with
 	 */
 	public static void selectController(IController controller) {
 		if(controllers.contains(controller))
@@ -63,6 +62,7 @@ public class OI {
 		resetButton = new Button(js0, controller.getResetButton());
 		autoDownButton = new Button(js0, controller.getLifterDownButton());
 		autoUpButton = new Button(js0, controller.getLifterUpButton());
+		victorySpinButton = new Button(js0, controller.getVictorySpinButtonA());
 	}
 	
 	// The axis and buttons
@@ -78,4 +78,5 @@ public class OI {
 	public static Button intakeOutButton;
 	public static Button autoDownButton;
 	public static Button autoUpButton;
+	public static Button victorySpinButton;
 }

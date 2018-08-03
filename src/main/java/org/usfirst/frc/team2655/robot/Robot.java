@@ -496,6 +496,13 @@ public class Robot extends IterativeRobot {
 			rotation *= 0.45;
 		}
 
+		// VICTORY SPIN
+		int direction = OI.js0.getPOV(0);
+		if(OI.victorySpinButton.isPressed() && (direction == 90 || direction == 270)){
+			power = 0;
+			rotation = (direction == 90) ? 1 : -1;
+		}
+
 		// Use velocity closed loop if both encoders work and velocity closed loop is enabled on SmartDashboard
 		driveBase.drive(power, rotation, true);
 
