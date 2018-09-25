@@ -19,12 +19,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot {
+	
+	public boolean controllerSwitchPrevValue = false;
 	
 	public static final boolean newIntake = false;
 	
@@ -85,8 +88,8 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().addAxisCamera("Front Camera", "axis-camera");
 		
 		// Allow the driver to select a controller
-		OI.selectController(OI.controllers.get(0));
-		
+		OI.selectController(OI.js0, OI.controllers.get(0));
+				
 		// Setup IMU and Motors
 		imu = new ADIS16448_IMU();
 				
@@ -457,6 +460,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		
+		// CONTROLLER SWITCH!!!
+		
+		boolean switchController = OI.js1.getRawButton(9);
+		if (switchController && !controllerSwitchPrevValue) {
+			if(OI.selectedJs == OI.js0)
+				OI.selectController(OI.js1, OI.controllers.get(0));
+			else
+				OI.selectController(OI.js0, OI.controllers.get(0));
+		}
+		controllerSwitchPrevValue = switchController;
 			
 		// LIFTER!!
 		
@@ -494,7 +508,7 @@ public class Robot extends IterativeRobot {
 		}
 
 		// VICTORY SPIN
-		int direction = OI.js0.getPOV(0);
+		int direction = OI.selectedJs.getPOV(0);
 		if(OI.victorySpinButton.isPressed() && (direction == 90 || direction == 270)){
 			power = 0;
 			rotation = (direction == 90) ? 1 : -1;
