@@ -1,0 +1,332 @@
+[33mcommit d562ea5ac24d23c723bedd0e5dec9b6b71b37f16[m[33m ([m[1;36mHEAD -> [m[1;32msecondbot[m[33m, [m[1;31morigin/secondbot[m[33m)[m
+Merge: bcb3d33 4cbd50b
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Aug 3 15:08:25 2018 -0400
+
+    Merge branch 'master' into secondbot
+
+[33mcommit 4cbd50b68a8d8a54e344ab5975efe8c4661985d9[m[33m ([m[1;32mmaster[m[33m)[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Aug 3 15:07:29 2018 -0400
+
+    Fixed vs button function name
+
+[33mcommit bcb3d33e1788ef1f57afe9b4fa3909be3f299d0b[m
+Merge: 8038469 dd3789d
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Aug 3 14:59:21 2018 -0400
+
+    Merge branch 'master' into secondbot
+    This added the victory spinn btn
+
+[33mcommit dd3789df431aea5dd106f3d8ac2f901519ff3585[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Aug 3 14:53:28 2018 -0400
+
+    Added victory spin button
+
+[33mcommit 80384696ab3716515d3d3d07aeb7f556cef2b3a4[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Aug 2 10:40:54 2018 -0400
+
+    Added warning message to indicate seondary bot. Secondbot will not use paths.
+
+[33mcommit 5b4345400c741b4105428cd2427011bc376b3f48[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Aug 2 10:13:24 2018 -0400
+
+    Fixed library issues and deployment issues. Added snobot simulator.
+
+[33mcommit d0feb1f854346e2330d459f1e7b1af67f1b989cb[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Jul 14 10:12:07 2018 -0400
+
+    Fixed the auto dashboard delay. It is no longer run twice!!!
+
+[33mcommit a9865ac444ae6f1d6148da8df7950b060b4bfef4[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Mon Jul 9 19:08:24 2018 -0400
+
+    Changed intake release button to right trigger
+
+[33mcommit 76e987b89280d3775a68df85fa0af4a41689df83[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Apr 14 16:57:40 2018 -0400
+
+    Minor bug fixes related to velocity closed loop mode.
+
+[33mcommit 37a7a6e339ed4a83a459241fe7ddaf469c8ebbe2[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Apr 14 16:19:28 2018 -0400
+
+    Fixed npe when no path file found.
+
+[33mcommit 85a865475f8a6405c660f6d611a07f89ffeabaec[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Apr 14 15:51:37 2018 -0400
+
+    Minor project structure changes.
+
+[33mcommit ed1349ba1c13724a9a36c8fddbe2ad5b7883c4ac[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Apr 14 14:45:16 2018 -0400
+
+    Added auto path 'timeout'
+
+[33mcommit 238e246a91752a6076ce93e96e71ad1c23d3d717[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Apr 14 13:27:09 2018 -0400
+
+    Fixed auto intake bug.
+
+[33mcommit ce4e42d57f6f4f8ad6ab4df448ae6706ffdb75b8[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Apr 13 22:19:39 2018 -0400
+
+    Made pathfinder work in reverse
+
+[33mcommit 4ad6e9a0b6c61ac9a65bc70463fb27e3dd73a21a[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Apr 13 21:43:26 2018 -0400
+
+    Updated to use pathfinder
+
+[33mcommit 8f04e8c2479965000b89558f04086f5c3a130343[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Apr 13 18:46:23 2018 -0400
+
+    Added some fixes with motion profiling and converted to idea project.
+
+[33mcommit c1b493d5b4c70111cbe42eb6cd79b1c8072b2c40[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Apr 12 19:50:24 2018 -0400
+
+    Switched to gradle build system.
+
+[33mcommit 33c07e9cf5a526f7d972cf5ac6e52a163b39ff4b[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Apr 10 21:38:59 2018 -0400
+
+    Added path command and Pathfinder infrastructure
+
+[33mcommit 99b2955ccd29d60b47c85e05352694b54f22e3ad[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Apr 7 20:19:18 2018 -0400
+
+    Re-enabled angle correction in auto drive.
+
+[33mcommit 0d769842644ee025ef47cb6632020cd456a5c01e[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Apr 5 19:46:51 2018 -0400
+
+    Auto works without motion profiling implemented.
+
+[33mcommit f7f1c0a80104e627a2401696b3d14409deccbb1d[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Apr 5 17:49:15 2018 -0400
+
+    Fallback cases in place.
+
+[33mcommit f91e1c10e81572907aca8e056f93d39e5e72422b[m[33m ([m[1;31morigin/motion[m[33m)[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Wed Apr 4 23:27:15 2018 -0400
+
+    It driftsgit add --all!
+
+[33mcommit cf7fb6d25b18cc003b87fefffb9bc87269eeb862[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Wed Apr 4 23:04:16 2018 -0400
+
+    Working on talon velocity pid
+
+[33mcommit ce92c59df338b1f90f9f7af6cbb83d6bbe186e2a[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Mar 27 21:29:51 2018 -0400
+
+    Rotate timeout
+
+[33mcommit e5552debe190b83ecb93145e5500279bcfa0d6af[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Mar 27 21:21:41 2018 -0400
+
+    Added intake control options in auto
+
+[33mcommit 61df88fd1c0ce2e9072124ac1623e7d128861fb6[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Mar 27 20:36:38 2018 -0400
+
+    Fallback updated.
+
+[33mcommit ff49c3eb96b0c2d78998b5a0ff859c3010cf939b[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Mar 27 19:01:40 2018 -0400
+
+    Fixed rotate.
+
+[33mcommit 640e6367d721684ddff85842cd56f9a97ee758c6[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Mar 27 18:26:27 2018 -0400
+
+    Drive ramp and rough auto
+
+[33mcommit 3200c2d3fbd996b31c654891440136cb9127d3aa[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Mar 17 08:26:20 2018 -0400
+
+    Fixed Auto for IMU on Z axis
+
+[33mcommit 7c799ca38b310cddb0a2bc761c06d3f866cec0f0[m[33m ([m[1;31morigin/beta[m[33m)[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Mar 16 17:10:31 2018 -0400
+
+    Swaped back to SRX for intake
+
+[33mcommit 7b515b399f53689b9a9833da377f4d997c775243[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Mar 15 23:28:45 2018 -0400
+
+    Fixed rotation direction and swaped back to (UNTESTED) Victor SP for intake.
+
+[33mcommit bcf671592e131d90e40f0f31232206e0453ab793[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Mar 15 19:57:55 2018 -0400
+
+    Adapted code to new robot design. UNTESTED
+
+[33mcommit 9e32b9101df7f3ab6a4f6db346a9f8ac923bbfbf[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Mar 8 22:01:01 2018 -0500
+
+    Added camera code (for one USB camera)
+
+[33mcommit 8ab20a922dea7695dee2124d15a234c7d51470a6[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Feb 20 23:14:54 2018 -0500
+
+    Fixed rotation when lifter extended
+
+[33mcommit 70e970e1f29d39c798b328e97a32de29b8abf2d8[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Feb 20 22:42:02 2018 -0500
+
+    Added smoother lifter up motion.
+
+[33mcommit d7438ca4427a986aaa328f9aa7de410f8e6a6057[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Feb 20 22:22:45 2018 -0500
+
+    Cubic on lifter axes.
+
+[33mcommit 745ce819ac0ec41659d4f643cc1349b11e9ec0fb[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Feb 20 21:49:47 2018 -0500
+
+    New auto commands added and tested
+
+[33mcommit ff6a19733ffe04f0440ede05609f27693d01c910[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Tue Feb 20 18:24:53 2018 -0500
+
+    Automated lifter
+
+[33mcommit 503e5a5e8f50dfd3a17165e5049ae7b84ef29656[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sun Feb 18 20:01:30 2018 -0500
+
+    Added advanced lifter control. (The code is a mess)
+
+[33mcommit e8c47768daf30bf2c344e149cd1922b342a67ff2[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sun Feb 18 17:26:23 2018 -0500
+
+    Tested auto routines
+
+[33mcommit d71640f99c6ae0279820871d50fd5863dfaf00a0[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sun Feb 18 11:58:02 2018 -0500
+
+    Competition bot rotate tuned
+
+[33mcommit d685f495d5486b10ed549588ebd313bf7c961d49[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sun Feb 18 10:53:10 2018 -0500
+
+    Added IMU null protection and fixed axis on competition bot.
+
+[33mcommit fd0b9fc457dbae01924d53b048f622d62ba7667f[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Feb 17 19:36:16 2018 -0500
+
+    Intake code DONE!
+
+[33mcommit b74ef8c63b0190179d6ffbf5fa53b67e4e6d5970[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Feb 17 15:55:06 2018 -0500
+
+    Longer time in brake mode after drive
+
+[33mcommit 6902cbd77f3e65c0ef359b2f1e780d0f73222a7b[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Feb 17 14:23:07 2018 -0500
+
+    Fix CAN ID's
+
+[33mcommit 417ac2ece16085b6682119b014968be511210e52[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sat Feb 17 14:12:23 2018 -0500
+
+    PID Tuned
+
+[33mcommit 4654f4e6b60ca898599c9543431064f91f918d6e[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Fri Feb 16 19:55:19 2018 -0500
+
+    Added auto logic code and commented code.
+
+[33mcommit 5fbb0fd70e79e9c083b738fe88963255bf97c527[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Feb 15 20:37:45 2018 -0500
+
+    Auto functional on old robot.
+
+[33mcommit 0ef66b33350d95179754a6adfa66abca9c06ef52[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Mon Feb 12 21:14:58 2018 -0500
+
+    Auto drive concept on old robot with quad encoders
+
+[33mcommit 5aa68525a3d7bd031f8ed8079a0f5c04af723fbf[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Sun Feb 11 16:49:29 2018 -0500
+
+    Work on Rotate PID
+
+[33mcommit edc6ec5e2310692865bbf6c61c351ee73375be80[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Thu Feb 8 21:12:28 2018 -0500
+
+    Works on robot
+
+[33mcommit 8738bc42afad992872f3a77d143c937908418992[m
+Author: Mr. James <nicomounts@gmail.com>
+Date:   Sat Feb 3 14:26:35 2018 -0500
+
+    Auto work
+
+[33mcommit 4ca75a97c217ee946cbf6d1786c00c142dadcf05[m
+Author: I have no name <null@null.nil>
+Date:   Sat Jan 20 09:51:14 2018 -0500
+
+    Added intake subsystem
+
+[33mcommit 3517f81f8831c29893666fd54b8105eb6c5d9e00[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Wed Jan 17 20:58:59 2018 -0500
+
+    Added more to project
+
+[33mcommit dcfcd4ab30dae071d63dd6dd8d8fdff4dc39531b[m
+Author: Marcus Behel <marcus.behel@mindspring.com>
+Date:   Wed Jan 17 14:23:32 2018 -0500
+
+    Pushed similar code to MiniProject2018
